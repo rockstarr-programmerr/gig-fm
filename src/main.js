@@ -37,3 +37,4 @@ app.on('window-all-closed', () => {
  * Actions
  */
 require('./actions/nav-drawer.js')
+require('./actions/repo.js')

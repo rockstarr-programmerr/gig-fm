@@ -26,10 +26,12 @@
     "webpack-cli": "^4.5.0"
   },
   "dependencies": {
-    "fs-jetpack": "^4.1.0",
+    "electron-store": "^7.0.2",
     "isomorphic-git": "^1.8.1",
+    "uuid": "^8.3.2",
     "vue": "^2.6.12",
     "vue-router": "^3.5.1",
-    "vuetify": "^2.4.7"
+    "vuetify": "^2.4.7",
+    "vuex": "^3.6.2"
   }
 }

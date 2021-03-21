@@ -9,15 +9,30 @@
 
 <script>
 import NavDrawer from '@C/NavDrawer.vue'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
   components: {
     NavDrawer
+  },
+  methods: {
+    ...mapActions('repo', [
+      'initRepos'
+    ])
+  },
+  mounted () {
+    this.initRepos()
   }
 }
 </script>
 
 <style scoped>
 
+</style>
+
+<style>
+.gig-clickable {
+  cursor: pointer;
+}
 </style>
