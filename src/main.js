@@ -1,12 +1,14 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 
-require('electron-reload')(__dirname)
+require('electron-reload')(__dirname, {
+  electron: path.join(__dirname, '..', 'node_modules', '.bin', 'electron')
+})
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 700,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -30,3 +32,8 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+
+/**
+ * Actions
+ */
+require('./actions/nav-drawer.js')
