@@ -1,11 +1,12 @@
-const { contextBridge, ipcRenderer } = require("electron")
+const { contextBridge, ipcRenderer } = require('electron')
 
 const validChanels = [
   'add-new-repo',
   'get-repos',
   'create-repo',
   'git-commit',
-  'git-log'
+  'git-log',
+  'git-status'
 ]
 
 contextBridge.exposeInMainWorld(

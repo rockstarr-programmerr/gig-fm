@@ -20,7 +20,7 @@
         </v-row>
       </v-col>
       <v-col cols="12">
-        <FilesChanged />
+        <FilesChanged :repo="repo" />
       </v-col>
       <v-col cols="12">
         <h2>Commit history</h2>
@@ -56,13 +56,20 @@ export default {
   methods: {
     gitCommit () {
       window.api.send('git-commit', this.repo.dir, 'First commit')
-        .catch(console.error)
+    },
+    setRepo (id) {
+      const repo = this.repos.find(repo => repo.id === id)
+      if (repo !== undefined) {
+        this.repo = repo
+      }
     }
   },
   mounted () {
-    const repo = this.repos.find(repo => repo.id === this.id)
-    if (repo !== undefined) {
-      this.repo = repo
+    this.setRepo(this.id)
+  },
+  watch: {
+    id (id) {
+      this.setRepo(id)
     }
   }
 }
