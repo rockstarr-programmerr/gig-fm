@@ -18,8 +18,26 @@ ipcMain.on('create-repo', (event, repo) => {
 })
 
 ipcMain.on('git-commit', async (event, dir, message) => {
-  await git.add({ fs, dir, filepath: '.' }).catch(console.error)
-  await git.commit({ fs, dir, message }).catch(console.error)
+  // Here, we cannot do a simple "git add -A" and then "git commit". This is isomorphic-git's issue.
+  // The author said: "For now though, the quickest way to implement a "git add -A"
+  // would probably be to run statusMatrix and then loop through the results
+  // and run git.add on all the files with changes."
+  // Reference: https://github.com/isomorphic-git/isomorphic-git/issues/715
+  const statuses = await git.statusMatrix({ fs, dir }).catch(console.error)
+  const promises = statuses.map(status => {
+    const [filepath, , WorkdirStatus, ] = [...status]
+    if (WorkdirStatus) {
+      return git.add({ fs, dir, filepath })
+    } else {
+      return git.remove({ fs, dir, filepath })
+    }
+  }).filter(promise => promise !== undefined)
+
+  Promise.all(promises)
+    .then(() => {
+      git.commit({ fs, dir, message }).catch(console.error)
+    })
+    .catch(console.error)
 })
 
 ipcMain.on('git-log', async (event, dir) => {
