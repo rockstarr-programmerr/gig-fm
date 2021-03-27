@@ -15,12 +15,13 @@ export class Author {
   }
 }
 
-export class History {
-  constructor (history) {
-    if (history === undefined) history = {}
-    this.message = history.message || ''
-    this.author = history.author || new Author
-    this.timestamp = history.timestamp || null
+export class Commit {
+  constructor (commit) {
+    if (commit === undefined) commit = {}
+    this.id = commit.id || ''
+    this.message = commit.message || ''
+    this.author = commit.author || new Author
+    this.timestamp = commit.timestamp || null
   }
 }
 
@@ -35,13 +36,11 @@ export default {
     }
   },
   actions: {
-    initRepos ({ commit }) {
-      window.api.receive('get-repos', repos => {
-        repos.forEach(repo => {
-          commit('addRepo', repo)
-        })
+    async initRepos ({ commit }) {
+      const repos = await window.api.invoke('get-repos') || []
+      repos.forEach(repo => {
+        commit('addRepo', repo)
       })
-      window.api.send('get-repos')
     },
     createRepo ({ commit }, repo) {
       window.api.send('create-repo', repo)

@@ -28,7 +28,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.s(c|a)ss$/,
+        test: /\.scss$/,
         use: [
           'vue-style-loader',
           'css-loader',
@@ -38,7 +38,25 @@ module.exports = {
               implementation: require('sass'),
               sassOptions: {
                 indentedSyntax: true
-              }
+              },
+              additionalData: "@import '@/styles/variables.scss';"
+            }
+          }
+        ]
+      },
+      {
+        test: /\.sass$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              implementation: require('sass'),
+              sassOptions: {
+                indentedSyntax: true
+              },
+              additionalData: "@import '@/styles/variables.scss'"
             }
           }
         ]

@@ -12,7 +12,7 @@
               color="primary"
               tile
               depressed
-              @click="gitCommit"
+              @click="commitDialog = true"
             >
               Commit
             </v-btn>
@@ -24,9 +24,56 @@
       </v-col>
       <v-col cols="12">
         <h2>Commit history</h2>
-        <CommitHistory />
+        <CommitHistory :repo="repo" ref="commitHistory" />
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="commitDialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title>Commit message</v-card-title>
+        <v-card-text>
+          <v-form ref="commitForm">
+            <v-textarea
+              v-model="commitMsg"
+              placeholder="A detailed message will save you a lot of time later."
+              autofocus
+              hide-details="auto"
+              :rules="commitMsgRules"
+            ></v-textarea>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            depressed
+            text
+            @click="commitDialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            depressed
+            text
+            width="81"
+            @click="gitCommit"
+          >
+            <v-progress-circular
+              v-if="loading"
+              color="primary"
+              width="2"
+              size="18"
+              indeterminate
+            ></v-progress-circular>
+            <span v-else>
+              Commit
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -35,6 +82,9 @@ import FilesChanged from './FilesChanged.vue'
 import CommitHistory from './CommitHistory.vue'
 import { Repo } from '@/store/repo.js'
 import { mapState } from 'vuex'
+import { alertSuccess, alertError } from '@/utils/message.js'
+import { loadingMixin } from '@/mixins/loading.js'
+import { required } from '@/utils/validate.js'
 
 export default {
   name: 'Repo',
@@ -42,11 +92,17 @@ export default {
     FilesChanged,
     CommitHistory
   },
+  mixins: [
+    loadingMixin
+  ],
   props: {
     id: String
   },
   data: () => ({
-    repo: new Repo
+    repo: new Repo,
+    commitDialog: false,
+    commitMsg: '',
+    commitMsgRules: [required]
   }),
   computed: {
     ...mapState({
@@ -55,7 +111,17 @@ export default {
   },
   methods: {
     gitCommit () {
-      window.api.send('git-commit', this.repo.dir, 'First commit')
+      if (this.loading) return
+      if (!this.$refs.commitForm.validate()) return
+      this['loading.start']()
+      window.api.invoke('git-commit', this.repo.dir, this.commitMsg)
+        .then(() => {
+          this.commitDialog = false
+          this.$refs.commitHistory.resetCommits()
+          alertSuccess()
+        })
+        .catch(alertError)
+        .finally(this['loading.stop'])
     },
     setRepo (id) {
       const repo = this.repos.find(repo => repo.id === id)

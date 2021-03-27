@@ -16,6 +16,11 @@ contextBridge.exposeInMainWorld(
         ipcRenderer.send(channel, ...args)
       }
     },
+    invoke (channel, ...args) {
+      if (validChanels.includes(channel)) {
+        return ipcRenderer.invoke(channel, ...args)
+      }
+    },
     receive (channel, func) {
       if (validChanels.includes(channel)) {
         ipcRenderer.on(channel, (event, ...args) => func(...args))
