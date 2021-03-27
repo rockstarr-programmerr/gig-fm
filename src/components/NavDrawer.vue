@@ -2,6 +2,7 @@
   <v-navigation-drawer
     app
     permanent
+    clipped
   >
     <v-list-item>
       <v-list-item-content>

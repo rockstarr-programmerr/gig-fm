@@ -1,5 +1,9 @@
 <template>
-  <v-app v-if="initCompleted" id="gig-fm">
+  <v-app
+    v-if="initCompleted"
+    id="gig-fm"
+  >
+    <AppBar />
     <NavDrawer />
     <v-main>
       <router-view/>
@@ -26,12 +30,14 @@
 
 <script>
 import NavDrawer from '@C/NavDrawer.vue'
+import AppBar from '@C/AppBar.vue'
 import { mapActions, mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'App',
   components: {
-    NavDrawer
+    NavDrawer,
+    AppBar
   },
   data: () => ({
     initCompleted: false
