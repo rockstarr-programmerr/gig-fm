@@ -4,21 +4,26 @@
     clipped-left
     flat
     height="30"
+    class="draggable"
   >
     <v-spacer></v-spacer>
-    <v-icon>mdi-window-minimize</v-icon>
-    <!-- <v-icon>mdi-window-maximize</v-icon> -->
-    <v-icon>mdi-window-restore</v-icon>
-    <v-icon>mdi-window-close</v-icon>
+    <WindowIcons />
   </v-app-bar>
 </template>
 
 <script>
+import WindowIcons from './WindowIcons.vue'
+
 export default {
-  name: 'AppBar'
+  name: 'AppBar',
+  components: {
+    WindowIcons
+  }
 }
 </script>
 
 <style scoped>
-
+.draggable {
+  -webkit-app-region: drag
+}
 </style>

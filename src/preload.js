@@ -6,7 +6,13 @@ const validChanels = [
   'create-repo',
   'git-commit',
   'git-log',
-  'git-status'
+  'git-status',
+  'window-close',
+  'window-minimize',
+  'window-maximize',
+  'window-unmaximize',
+  'on-window-maximized',
+  'on-window-unmaximized'
 ]
 
 contextBridge.exposeInMainWorld(

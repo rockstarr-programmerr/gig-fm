@@ -6,7 +6,9 @@
     <AppBar />
     <NavDrawer />
     <v-main>
-      <router-view/>
+      <perfect-scrollbar ref="scroll">
+        <router-view/>
+      </perfect-scrollbar>
       <v-snackbar
         v-model="alertShow"
         app
@@ -30,7 +32,7 @@
 
 <script>
 import NavDrawer from '@C/NavDrawer.vue'
-import AppBar from '@C/AppBar.vue'
+import AppBar from '@C/AppBar/index.vue'
 import { mapActions, mapState, mapMutations } from 'vuex'
 
 export default {
@@ -67,15 +69,26 @@ export default {
   async created () {
     await this.initRepos()
     this.initCompleted = true
+  },
+  watch: {
+    $route() {
+      this.$refs.scroll.$el.scrollTop = 0;
+    }
   }
 }
 </script>
 
 <style scoped>
-
+.ps {
+  height: calc(100vh - 30px);  /** 30px is app-bar's height */
+}
 </style>
 
 <style>
+::-webkit-scrollbar {
+  display: none;
+}
+
 .gig-clickable {
   cursor: pointer;
 }
