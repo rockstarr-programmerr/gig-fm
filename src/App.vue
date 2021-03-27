@@ -73,4 +73,8 @@ export default {
 .gig-clickable {
   cursor: pointer;
 }
+
+.gig-preserve-whitespace {
+  white-space: pre-wrap;
+}
 </style>

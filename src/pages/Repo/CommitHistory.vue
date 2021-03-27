@@ -1,22 +1,35 @@
 <template>
   <div>
-    <ul>
-      <li
-        v-for="commit of commits"
+    <v-timeline
+      dense
+      align-top
+    >
+      <v-timeline-item
+        v-for="(commit, index) of commits"
         :key="commit.id"
-        class="mb-3"
+        small
+        :color="index % 2 === 0 ? 'primary' : 'secondary'"
       >
-        <p class="mb-0">Message: {{ commit.message }}</p>
-        <p class="mb-0">Author: {{ commit.author.name }} ({{ commit.author.email }})</p>
-        <p class="mb-0">Time: {{ new Date(commit.timestamp) }}</p>
-      </li>
-    </ul>
+        <v-row>
+          <v-col cols="3">
+            <p class="mb-0 text-body-2">
+              {{ formatTimestamp(commit.timestamp) }}
+            </p>
+          </v-col>
+          <v-col cols="9">
+            <p class="mb-0 text-body-1 gig-preserve-whitespace">{{ commit.message }}</p>
+            <p class="caption font-weight-light">{{ commit.author.name }} ({{ commit.author.email }})</p>
+          </v-col>
+        </v-row>
+      </v-timeline-item>
+    </v-timeline>
   </div>
 </template>
 
 <script>
 import { Repo, Commit, Author } from '@/store/repo.js'
 import { loadingMixin } from '@/mixins/loading.js'
+import { formatTimestamp } from '@/utils/format.js'
 
 export default {
   name: 'CommitHistory',
@@ -36,7 +49,6 @@ export default {
       this['loading.start']
       window.api.invoke('git-log', repo.dir)
         .then(results => {
-          console.log(results)
           this.commits = []
           results.forEach(result => {
             const author = new Author({
@@ -57,7 +69,8 @@ export default {
     },
     resetCommits () {  // Parent component calls this method
       this.setCommits(this.repo)
-    }
+    },
+    formatTimestamp
   },
   watch: {
     repo (repo) {
