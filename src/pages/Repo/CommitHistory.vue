@@ -60,17 +60,12 @@ export default {
       this['loading.start']()
 
       const results = await window.api.invoke('git-log', repo.dir)
-        .catch(error => {
-          if (error.message.includes('NotFoundError')) {
-            this.commits = []
-          } else {
-            console.error(error)
-          }
-        })
-        .finally(this['loading.stop'])
 
       this.commits = []
-      if (results === undefined) return
+      if (results === undefined) {
+        this['loading.stop']()
+        return
+      }
       results.forEach(result => {
         const author = new Author({
           name: result.commit.author.name,
@@ -84,6 +79,7 @@ export default {
         })
         this.commits.push(commit)
       })
+      this['loading.stop']()
     },
     resetCommits () {  // Parent component calls this method
       this.setCommits(this.repo)

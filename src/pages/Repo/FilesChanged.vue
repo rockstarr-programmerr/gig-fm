@@ -1,43 +1,84 @@
 <template>
-  <div>
-    <div>
-      New files:
-      <ul>
-        <li
-          v-for="file of newFiles"
-          :key="file"
-        >
-          {{ file }}
-        </li>
-      </ul>
+  <LoadingSpinner v-if="loading" />
+  <div v-else>
+    <div class="mb-3">
+      <h3>New files</h3>
+      <v-treeview
+        :items="newTreeItems"
+        dense
+        activatable
+        hoverable
+        open-on-click
+        transition
+        color="secondary"
+      >
+        <template #prepend="{ item, open }">
+          <v-icon v-if="!item.isFile">
+          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+        </v-icon>
+        <v-icon v-else>
+          mdi-file-outline
+        </v-icon>
+        </template>
+      </v-treeview>
     </div>
-    <div>
-      Changed files:
-      <ul>
-        <li
-          v-for="file of changedFiles"
-          :key="file"
-        >
-          {{ file }}
-        </li>
-      </ul>
+    <div
+      v-if="changedTreeItems.length > 0"
+      class="mb-3"
+    >
+      <h3>Changed files</h3>
+      <v-treeview
+        :items="changedTreeItems"
+        dense
+        activatable
+        hoverable
+        open-on-click
+        transition
+        color="secondary"
+      >
+        <template #prepend="{ item, open }">
+          <v-icon v-if="!item.isFile">
+          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+        </v-icon>
+        <v-icon v-else>
+          mdi-file-outline
+        </v-icon>
+        </template>
+      </v-treeview>
     </div>
-    <div>
-      Deleted files:
-      <ul>
-        <li
-          v-for="file of deletedFiles"
-          :key="file"
-        >
-          {{ file }}
-        </li>
-      </ul>
+    <div
+      v-if="deletedTreeItems.length > 0"
+      class="mb-3"
+    >
+      <h3>Deleted files</h3>
+      <v-treeview
+        :items="deletedTreeItems"
+        dense
+        activatable
+        hoverable
+        open-on-click
+        transition
+        color="secondary"
+      >
+        <template #prepend="{ item, open }">
+          <v-icon v-if="!item.isFile">
+          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+        </v-icon>
+        <v-icon v-else>
+          mdi-file-outline
+        </v-icon>
+        </template>
+      </v-treeview>
     </div>
   </div>
 </template>
 
 <script>
 import { Repo } from '@/store/repo.js'
+import { TreeViewBuilder } from '@/utils/tree-view-builder.js'
+import { arrayEqual } from '@/utils/common.js'
+import { loadingMixin } from '@/mixins/loading.js'
+import LoadingSpinner from '@C/LoadingSpinner.vue'
 
 export default {
   name: 'FilesChanged',
@@ -47,11 +88,18 @@ export default {
       default: () => new Repo
     }
   },
+  components: {
+    LoadingSpinner
+  },
+  mixins: [loadingMixin],
   data: () => ({
     interval: undefined,
     newFiles: [],
     changedFiles: [],
-    deletedFiles: []
+    deletedFiles: [],
+    newTreeItems: [],
+    changedTreeItems: [],
+    deletedTreeItems: []
   }),
   methods: {
     startWatchingStatus (repo) {
@@ -72,6 +120,8 @@ export default {
           if (isChangedFile(result)) this.changedFiles.push(result[FILE])
           if (isDeletedFile(result)) this.deletedFiles.push(result[FILE])
         })
+
+        this['loading.stop']()
       })
 
       clearInterval(this.interval)
@@ -84,7 +134,31 @@ export default {
     repo (repo) {
       if (!repo.hasData()) return
       this.startWatchingStatus(repo)
-    }
+    },
+    newFiles (val, oldVal) {
+      if (arrayEqual(val, oldVal)) return
+      this['loading.start']()
+      const builder = new TreeViewBuilder(val)
+      this.newTreeItems = builder.build()
+      this['loading.stop']()
+    },
+    changedFiles (val, oldVal) {
+      if (arrayEqual(val, oldVal)) return
+      this['loading.start']()
+      const builder = new TreeViewBuilder(val)
+      this.changedTreeItems = builder.build()
+      this['loading.stop']()
+    },
+    deletedFiles (val, oldVal) {
+      if (arrayEqual(val, oldVal)) return
+      this['loading.start']()
+      const builder = new TreeViewBuilder(val)
+      this.deletedTreeItems = builder.build()
+      this['loading.stop']()
+    },
+  },
+  mounted () {
+    this['loading.start']()
   },
   beforeDestroy () {
     clearInterval(this.interval)

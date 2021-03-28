@@ -1,23 +1,21 @@
 <template>
   <v-container>
     <h1>Repo: <span>{{ repo.name }}</span></h1>
-    <v-row>
+    <v-divider></v-divider>
+    <v-row class="mt-5">
       <v-col cols="12">
-        <v-row>
-          <v-col cols="6">
-            <h2>Files changed</h2>
-          </v-col>
-          <v-col cols="6" class="text-right">
-            <v-btn
-              color="primary"
-              tile
-              depressed
-              @click="commitDialog = true"
-            >
-              Commit
-            </v-btn>
-          </v-col>
-        </v-row>
+        <div class="d-flex align-items-center">
+          <h2>Files changed</h2>
+          <v-btn
+            color="primary"
+            tile
+            depressed
+            class="ml-5"
+            @click="commitDialog = true"
+          >
+            Commit
+          </v-btn>
+        </div>
       </v-col>
       <v-col cols="12">
         <FilesChanged :repo="repo" />

@@ -38,7 +38,10 @@ ipcMain.handle('git-commit', async (event, dir, message) => {
 })
 
 ipcMain.handle('git-log', async (event, dir) => {
-  const log = await git.log({ fs, dir })
+  const log = await git.log({ fs, dir }).catch(error => {
+    if (error.code === 'NotFoundError') return
+    throw error
+  })
   return log
 })
 
