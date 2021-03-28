@@ -4,7 +4,7 @@ const fs = require('fs')
 const ElectronStore = require('electron-store')
 
 
-ipcMain.handle('get-repos', async (event) => {
+ipcMain.handle('get-repos', async () => {
   const store = new ElectronStore
   const repos = store.get('repos') || []
   return repos

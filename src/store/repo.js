@@ -5,6 +5,10 @@ export class Repo {
     this.name = repo.name || ''
     this.dir = repo.dir || ''
   }
+
+  hasData () {
+    return this.id !== ''
+  }
 }
 
 export class Author {
@@ -39,11 +43,13 @@ export default {
     async initRepos ({ commit }) {
       const repos = await window.api.invoke('get-repos') || []
       repos.forEach(repo => {
+        repo = new Repo(repo)
         commit('addRepo', repo)
       })
     },
     createRepo ({ commit }, repo) {
       window.api.send('create-repo', repo)
+      repo = new Repo(repo)
       commit('addRepo', repo)
     }
   }

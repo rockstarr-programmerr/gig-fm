@@ -82,6 +82,7 @@ export default {
   },
   watch: {
     repo (repo) {
+      if (!repo.hasData()) return
       this.startWatchingStatus(repo)
     }
   },

@@ -60,13 +60,7 @@
             width="81"
             @click="gitCommit"
           >
-            <v-progress-circular
-              v-if="loading"
-              color="primary"
-              width="2"
-              size="18"
-              indeterminate
-            ></v-progress-circular>
+            <LoadingSpinner v-if="loading" />
             <span v-else>
               Commit
             </span>
@@ -78,6 +72,7 @@
 </template>
 
 <script>
+import LoadingSpinner from '@C/LoadingSpinner.vue'
 import FilesChanged from './FilesChanged.vue'
 import CommitHistory from './CommitHistory.vue'
 import { Repo } from '@/store/repo.js'
@@ -90,7 +85,8 @@ export default {
   name: 'Repo',
   components: {
     FilesChanged,
-    CommitHistory
+    CommitHistory,
+    LoadingSpinner
   },
   mixins: [
     loadingMixin

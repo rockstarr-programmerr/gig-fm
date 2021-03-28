@@ -7,7 +7,7 @@
     <NavDrawer />
     <v-main>
       <perfect-scrollbar ref="scroll">
-        <router-view/>
+        <router-view />
       </perfect-scrollbar>
       <v-snackbar
         v-model="alertShow"
