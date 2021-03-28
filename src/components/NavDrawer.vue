@@ -66,9 +66,10 @@ export default {
       'createRepo'
     ]),
     addNewRepo () {
-      window.api.receive('add-new-repo', repo => {
+      window.api.receive('add-new-repo', async repo => {
         if (repo === undefined) return
-        this.createRepo(repo)
+        await this.createRepo(repo)
+        this.$router.push({ name: 'Repo', params: { id: repo.id } })
       })
       window.api.send('add-new-repo')
     },

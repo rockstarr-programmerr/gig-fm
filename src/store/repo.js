@@ -51,6 +51,7 @@ export default {
       window.api.send('create-repo', repo)
       repo = new Repo(repo)
       commit('addRepo', repo)
+      return repo
     }
   }
 }

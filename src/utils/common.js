@@ -20,5 +20,11 @@ export function makeUniqueArray (array) {
 }
 
 export function arrayEqual (array1, array2) {
+  if (
+    (array1.length === 0 && array2.length !== 0) ||
+    (array1.length !== 0 && array2.length === 0)
+  ) {
+    return false
+  }
   return array1.every((value, index) => array2[index] === value)
 }

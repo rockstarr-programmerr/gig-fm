@@ -36,7 +36,7 @@
             <v-textarea
               v-model="commitMsg"
               placeholder="A detailed message will save you a lot of time later."
-              autofocus
+              :autofocus="commitDialog"
               hide-details="auto"
               :rules="commitMsgRules"
             ></v-textarea>
@@ -64,6 +64,12 @@
             </span>
           </v-btn>
         </v-card-actions>
+        <div
+          v-if="funnyLoading"
+          class="caption text-right px-4 pb-4"
+        >
+          {{ loadingText }}
+        </div>
       </v-card>
     </v-dialog>
   </v-container>
@@ -78,6 +84,7 @@ import { mapState } from 'vuex'
 import { alertSuccess, alertError } from '@/utils/message.js'
 import { loadingMixin } from '@/mixins/loading.js'
 import { required } from '@/utils/validate.js'
+import { wait, randomChoice } from '@/utils/common.js'
 
 export default {
   name: 'Repo',
@@ -96,7 +103,18 @@ export default {
     repo: new Repo,
     commitDialog: false,
     commitMsg: '',
-    commitMsgRules: [required]
+    commitMsgRules: [required],
+    funnyLoading: false,
+    loadingText: '',
+    initialLoadingText: 'It may take a feel minutes if your project has many large files.',
+    loadingTexts: [
+      "Tuning guitars...",
+      "Preparing pedal boards...",
+      "Where's my pick?...",
+      "Warming up with arpeggios...",
+      "Singer arrived late...",
+      "What the hell is in your project?"
+    ]
   }),
   computed: {
     ...mapState({
@@ -116,11 +134,22 @@ export default {
         })
         .catch(alertError)
         .finally(this['loading.stop'])
+
+      this.startFunnyLoadingText()
     },
     setRepo (id) {
       const repo = this.repos.find(repo => repo.id === id)
       if (repo !== undefined) {
         this.repo = repo
+      }
+    },
+    async startFunnyLoadingText () {
+      await wait(4000)
+      this.loadingText = this.initialLoadingText
+      this.funnyLoading = true
+      while (this.loading) {
+        await wait(6000)
+        this.loadingText = randomChoice(this.loadingTexts)
       }
     }
   },

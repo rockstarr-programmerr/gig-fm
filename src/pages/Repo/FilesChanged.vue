@@ -1,7 +1,16 @@
 <template>
   <LoadingSpinner v-if="loading" />
+  <div
+    v-else-if="repoClean"
+    class="text-body-2 font-weight-light font-italic"
+  >
+    (No change)
+  </div>
   <div v-else>
-    <div class="mb-3">
+    <div
+      v-if="newTreeItems.length > 0"
+      class="mb-3"
+    >
       <h3>New files</h3>
       <v-treeview
         :items="newTreeItems"
@@ -101,13 +110,20 @@ export default {
     changedTreeItems: [],
     deletedTreeItems: []
   }),
+  computed: {
+    repoClean () {
+      return this.newTreeItems.length === 0 &&
+             this.changedTreeItems.length === 0 &&
+             this.deletedTreeItems.length === 0
+    }
+  },
   methods: {
     startWatchingStatus (repo) {
       window.api.receive('git-status', (results) => {
-        if (results === undefined) return
         this.newFiles = []
         this.changedFiles = []
         this.deletedFiles = []
+        if (results === undefined) return
 
         const FILE = 0, ABSENT = 0, HEAD = 1, WORKDIR = 2, STAGE = 3
 
@@ -133,6 +149,7 @@ export default {
   watch: {
     repo (repo) {
       if (!repo.hasData()) return
+      this['loading.start']()
       this.startWatchingStatus(repo)
     },
     newFiles (val, oldVal) {
