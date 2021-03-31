@@ -49,3 +49,14 @@ ipcMain.on('git-status', async (event, dir) => {
   const status = await git.statusMatrix({ fs, dir }).catch(console.error)
   event.reply('git-status', status)
 })
+
+ipcMain.handle('git-checkout', async (event, dir, ref) => {
+  const result = await git.checkout({ fs, dir, ref })
+  return result
+})
+
+ipcMain.handle('git-resolve-ref', async (event, dir, ref) => {
+  if (ref === undefined) ref = 'HEAD'
+  const result = await git.resolveRef({ fs, dir, ref })
+  return result
+})

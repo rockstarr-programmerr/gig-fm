@@ -18,15 +18,49 @@
         small
         :color="index % 2 === 0 ? 'primary' : 'secondary'"
       >
-        <v-row>
+        <v-row
+          class="commit-row"
+          :class="[
+            currentTheme,
+            { 'commit-row--active': commit.id === currentCommitId }
+          ]"
+        >
           <v-col cols="3">
             <p class="mb-0 text-body-2">
               {{ formatTimestamp(commit.timestamp) }}
             </p>
           </v-col>
           <v-col cols="9">
-            <p class="mb-0 text-body-1 gig-preserve-whitespace">{{ commit.message }}</p>
-            <p class="caption font-weight-light">{{ commit.author.name }} ({{ commit.author.email }})</p>
+            <v-row>
+              <v-col cols="11">
+                <p class="mb-0 text-body-1 gig-preserve-whitespace">{{ commit.message }}</p>
+                <p class="caption font-weight-light">{{ commit.author.name }} ({{ commit.author.email }})</p>
+              </v-col>
+              <v-col cols="1">
+                <v-menu nudge-bottom="30">
+                  <template #activator="{ attrs, on }">
+                    <v-icon
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      mdi-dots-horizontal
+                    </v-icon>
+                  </template>
+                  <v-list dense>
+                    <v-list-item @click="checkout(commit.id)">
+                      <v-list-item-content>
+                        <v-list-item-title>Checkout</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="changeMessage(commit.id)">
+                      <v-list-item-content>
+                        <v-list-item-title>Change message</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-timeline-item>
@@ -39,9 +73,11 @@ import LoadingSpinner from '@C/LoadingSpinner.vue'
 import { Repo, Commit, Author } from '@/store/repo.js'
 import { loadingMixin } from '@/mixins/loading.js'
 import { formatTimestamp } from '@/utils/format.js'
+import { alertSuccess, alertError } from '@/utils/message.js'
 
 export default {
   name: 'CommitHistory',
+  inject: ['theme'],
   props: {
     repo: {
       required: true,
@@ -53,8 +89,15 @@ export default {
   },
   mixins: [loadingMixin],
   data: () => ({
-    commits: []
+    commits: [],
+    currentCommitId: '',
   }),
+  computed: {
+    currentTheme () {
+      const theme = this.theme.isDark ? 'dark' : 'light'
+      return `theme--${theme}`
+    }
+  },
   methods: {
     async setCommits (repo) {
       this['loading.start']()
@@ -79,12 +122,26 @@ export default {
         })
         this.commits.push(commit)
       })
+
+      this.getCurrentCommit()
       this['loading.stop']()
     },
     resetCommits () {  // Parent component calls this method
       this.setCommits(this.repo)
     },
-    formatTimestamp
+    async getCurrentCommit () {
+      // Which commit is HEAD currently at?
+      this.currentCommitId = await window.api.invoke('git-resolve-ref', this.repo.dir)
+    },
+    formatTimestamp,
+    checkout (commitId) {
+      window.api.invoke('git-checkout', this.repo.dir, commitId)
+        .then(alertSuccess)
+        .catch(alertError)
+    },
+    changeMessage (commitId) {
+
+    }
   },
   watch: {
     repo (repo) {
@@ -99,6 +156,26 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="sass">
+@import 'vuetify/src/styles/styles.sass'
 
+@include theme(commit-row) using ($material)
+  @include states($material)
+
+$hover-padding: -12px
+
+.commit-row
+  user-select: none
+
+  &:before
+    background-color: currentColor
+    bottom: $hover-padding
+    left: $hover-padding
+    right: $hover-padding
+    top: $hover-padding
+    content: ''
+    opacity: 0
+    pointer-events: none
+    position: absolute
+    transition: $primary-transition
 </style>

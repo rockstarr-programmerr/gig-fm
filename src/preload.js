@@ -4,15 +4,17 @@ const validChanels = [
   'add-new-repo',
   'get-repos',
   'create-repo',
-  'git-commit',
-  'git-log',
-  'git-status',
   'window-close',
   'window-minimize',
   'window-maximize',
   'window-unmaximize',
   'on-window-maximized',
-  'on-window-unmaximized'
+  'on-window-unmaximized',
+  'git-commit',
+  'git-log',
+  'git-status',
+  'git-checkout',
+  'git-resolve-ref'
 ]
 
 contextBridge.exposeInMainWorld(

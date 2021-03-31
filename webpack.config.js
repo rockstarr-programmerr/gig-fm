@@ -39,7 +39,7 @@ module.exports = {
               sassOptions: {
                 indentedSyntax: true
               },
-              additionalData: "@import '@/styles/variables.scss';"
+              additionalData: "@import '@/styles/variables.scss'"
             }
           }
         ]
