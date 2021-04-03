@@ -47,7 +47,10 @@
                     </v-icon>
                   </template>
                   <v-list dense>
-                    <v-list-item @click="checkout(commit.id)">
+                    <v-list-item
+                      @click="checkout(commit.id)"
+                      :disabled="commit.id === currentCommitId"
+                    >
                       <v-list-item-content>
                         <v-list-item-title>Checkout</v-list-item-title>
                       </v-list-item-content>
@@ -96,13 +99,25 @@ export default {
     currentTheme () {
       const theme = this.theme.isDark ? 'dark' : 'light'
       return `theme--${theme}`
+    },
+    firstCommitId () {
+      const firstCommit = this.commits[0]
+      if (firstCommit !== undefined) {
+        return firstCommit.id
+      } else {
+        return ''
+      }
     }
   },
   methods: {
+    formatTimestamp,
     async setCommits (repo) {
       this['loading.start']()
 
-      const results = await window.api.invoke('git-log', repo.dir)
+      // NOTE: Version 1.0.0 only support 1 branch, so we fix branch name as 'master' here
+      // Later versions will need to find out how to get this branch name if they were to
+      // support multiple branches
+      const results = await window.api.invoke('git-log', repo.dir, 'master')
 
       this.commits = []
       if (results === undefined) {
@@ -123,20 +138,25 @@ export default {
         this.commits.push(commit)
       })
 
-      this.getCurrentCommit()
+      this.setCurrentCommit()
       this['loading.stop']()
     },
     resetCommits () {  // Parent component calls this method
       this.setCommits(this.repo)
     },
-    async getCurrentCommit () {
+    async setCurrentCommit () {
       // Which commit is HEAD currently at?
       this.currentCommitId = await window.api.invoke('git-resolve-ref', this.repo.dir)
     },
-    formatTimestamp,
     checkout (commitId) {
-      window.api.invoke('git-checkout', this.repo.dir, commitId)
-        .then(alertSuccess)
+      const isFirstCommit = commitId === this.firstCommitId
+      const ref = isFirstCommit ? 'master' : commitId
+
+      window.api.invoke('git-checkout', this.repo.dir, ref)
+        .then(() => {
+          alertSuccess()
+          this.setCurrentCommit()
+        })
         .catch(alertError)
     },
     changeMessage (commitId) {

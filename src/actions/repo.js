@@ -3,15 +3,14 @@ const git = require('isomorphic-git')
 const fs = require('fs')
 const ElectronStore = require('electron-store')
 
+const store = new ElectronStore
 
 ipcMain.handle('get-repos', async () => {
-  const store = new ElectronStore
   const repos = store.get('repos') || []
   return repos
 })
 
 ipcMain.on('create-repo', (event, repo) => {
-  const store = new ElectronStore
   const repos = store.get('repos') || []
   repos.splice(0, 0, repo)
   store.set('repos', repos)
@@ -37,8 +36,9 @@ ipcMain.handle('git-commit', async (event, dir, message) => {
   await git.commit({ fs, dir, message })
 })
 
-ipcMain.handle('git-log', async (event, dir) => {
-  const log = await git.log({ fs, dir }).catch(error => {
+ipcMain.handle('git-log', async (event, dir, ref) => {
+  if (ref === undefined) ref = 'HEAD'
+  const log = await git.log({ fs, dir, ref }).catch(error => {
     if (error.code === 'NotFoundError') return
     throw error
   })
