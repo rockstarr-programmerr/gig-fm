@@ -13,7 +13,7 @@
       align-top
     >
       <v-timeline-item
-        v-for="(commit, index) of commits"
+        v-for="(commit, index) of paginatedCommits"
         :key="commit.id"
         small
         :color="index % 2 === 0 ? 'primary' : 'secondary'"
@@ -76,6 +76,13 @@
         </v-row>
       </v-timeline-item>
     </v-timeline>
+    <v-pagination
+      v-if="pageCount > 1"
+      v-model="page"
+      :length="pageCount"
+      :total-visible="7"
+      class="mb-9"
+    ></v-pagination>
     <v-dialog
       v-model="confirmResetDialog"
       max-width="500"
@@ -147,9 +154,19 @@ export default {
     commits: [],
     currentCommitId: '',
     commitToReset: {},
-    confirmResetDialog: false
+    confirmResetDialog: false,
+    page: 1,
+    perPage: 10
   }),
   computed: {
+    paginatedCommits () {
+      const startIndex = (this.page - 1) * this.perPage
+      const endIndex = startIndex + 10
+      return this.commits.slice(startIndex, endIndex + 1)
+    },
+    pageCount () {
+      return Math.ceil(this.commits.length / this.perPage)
+    },
     currentTheme () {
       const theme = this.theme.isDark ? 'dark' : 'light'
       return `theme--${theme}`
