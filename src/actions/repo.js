@@ -1,6 +1,7 @@
 const { ipcMain } = require('electron')
 const git = require('isomorphic-git')
 const fs = require('fs')
+const path = require('path')
 const ElectronStore = require('electron-store')
 
 const store = new ElectronStore
@@ -59,4 +60,12 @@ ipcMain.handle('git-resolve-ref', async (event, dir, ref) => {
   if (ref === undefined) ref = 'HEAD'
   const result = await git.resolveRef({ fs, dir, ref })
   return result
+})
+
+ipcMain.handle('git-reset-hard', async (event, dir, commitId, branchName) => {
+  const headDir = path.resolve(dir, `.git/refs/heads/${branchName}`)
+  const indexDir = path.resolve(dir, `.git/index`)
+  fs.writeFileSync(headDir, commitId)
+  fs.unlinkSync(indexDir)
+  await git.checkout({ fs, dir, ref: branchName, force: true })
 })

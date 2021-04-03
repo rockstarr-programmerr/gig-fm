@@ -60,6 +60,14 @@
                         <v-list-item-title>Change message</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
+                    <v-list-item
+                      @click="confirmReset(commit)"
+                      :disabled="commit.id === currentCommitId"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>Reset to this commit</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
                   </v-list>
                 </v-menu>
               </v-col>
@@ -68,6 +76,50 @@
         </v-row>
       </v-timeline-item>
     </v-timeline>
+    <v-dialog
+      v-model="confirmResetDialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title>Confirm reset</v-card-title>
+        <v-card-text>
+          <p>
+            By resetting to a past version, you <strong>lose</strong> all versions after it.
+            This action is <strong>irreversible!</strong>
+            Please confirm this is what you really want.
+          </p>
+          <p>
+            You should know the difference between <strong>reset</strong> and <strong>checkout</strong>.
+          </p>
+          <p>
+            Commit you're resetting to:
+          </p>
+          <blockquote class="blockquote gig-preserve-whitespace">{{ commitToReset.message }}</blockquote>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            depressed
+            text
+            @click="confirmResetDialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            depressed
+            text
+            width="94"
+            @click="gitReset"
+          >
+            <LoadingSpinner v-if="loading" />
+            <span v-else>
+              Confirm
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -94,6 +146,8 @@ export default {
   data: () => ({
     commits: [],
     currentCommitId: '',
+    commitToReset: {},
+    confirmResetDialog: false
   }),
   computed: {
     currentTheme () {
@@ -161,6 +215,22 @@ export default {
     },
     changeMessage (commitId) {
 
+    },
+    confirmReset (commit) {
+      this.commitToReset = commit
+      this.confirmResetDialog = true
+    },
+    gitReset () {
+      this['loading.start']()
+      window.api.invoke('git-reset-hard', this.repo.dir, this.commitToReset.id, 'master')
+        .then(() => {
+          alertSuccess()
+          this.confirmResetDialog = false
+          this.commitToReset = {}
+          this.setCommits(this.repo)
+        })
+        .catch(alertError)
+        .finally(this['loading.stop'])
     }
   },
   watch: {

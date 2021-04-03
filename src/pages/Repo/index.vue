@@ -129,7 +129,9 @@ export default {
       window.api.invoke('git-commit', this.repo.dir, this.commitMsg)
         .then(() => {
           this.commitDialog = false
+          this.commitMsg = ''
           this.$refs.commitHistory.resetCommits()
+          this.$refs.commitForm.resetValidation()
           alertSuccess()
         })
         .catch(alertError)
@@ -151,6 +153,8 @@ export default {
         await wait(6000)
         this.loadingText = randomChoice(this.loadingTexts)
       }
+      this.funnyLoading = false
+      this.loadingText = ''
     }
   },
   mounted () {
