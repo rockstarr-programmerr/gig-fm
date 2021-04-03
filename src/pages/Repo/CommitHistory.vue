@@ -55,17 +55,20 @@
                         <v-list-item-title>Checkout</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="changeMessage(commit.id)">
-                      <v-list-item-content>
-                        <v-list-item-title>Change message</v-list-item-title>
-                      </v-list-item-content>
-                    </v-list-item>
                     <v-list-item
                       @click="confirmReset(commit)"
-                      :disabled="commit.id === currentCommitId"
+                      :disabled="commit.id === firstCommitId"
                     >
                       <v-list-item-content>
                         <v-list-item-title>Reset to this commit</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item
+                      v-if="commit.id === firstCommitId && currentCommitId === firstCommitId"
+                      @click="changeMsgDialog = true"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>Change message</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -88,7 +91,7 @@
       max-width="500"
     >
       <v-card>
-        <v-card-title>Confirm reset!</v-card-title>
+        <v-card-title>Confirm reset</v-card-title>
         <v-card-text>
           <p>
             By resetting to a past version, you <strong>lose</strong> all versions after it.
@@ -127,6 +130,48 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="changeMsgDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title>
+          Change commit message
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="changeMsgForm">
+            <v-textarea
+              v-model="newMsg"
+              placeholder="You can only change message of the newest and unpublished commit."
+              :autofocus="changeMsgDialog"
+              hide-details="auto"
+              :rules="commitMsgRules"
+            ></v-textarea>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            depressed
+            text
+            @click="changeMsgDialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            depressed
+            text
+            @click="changeMessage"
+          >
+            <LoadingSpinner v-if="loading" />
+            <span v-else>
+              Change
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -136,6 +181,7 @@ import { Repo, Commit, Author } from '@/store/repo.js'
 import { loadingMixin } from '@/mixins/loading.js'
 import { formatTimestamp } from '@/utils/format.js'
 import { alertSuccess, alertError } from '@/utils/message.js'
+import { required } from '@/utils/validate.js'
 
 export default {
   name: 'CommitHistory',
@@ -156,7 +202,10 @@ export default {
     commitToReset: {},
     confirmResetDialog: false,
     page: 1,
-    perPage: 10
+    perPage: 10,
+    changeMsgDialog: false,
+    newMsg: '',
+    commitMsgRules: [required]
   }),
   computed: {
     paginatedCommits () {
@@ -230,8 +279,17 @@ export default {
         })
         .catch(alertError)
     },
-    changeMessage (commitId) {
-
+    changeMessage () {
+      this['loading.start']()
+      window.api.invoke('git-change-message', this.repo.dir, this.newMsg, 'master')
+        .then(() => {
+          alertSuccess()
+          this.changeMsgDialog = false
+          this.newMsg = ''
+          this.setCommits(this.repo)
+        })
+        .catch(alertError)
+        .finally(this['loading.stop'])
     },
     confirmReset (commit) {
       this.commitToReset = commit

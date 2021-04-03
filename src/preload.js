@@ -15,7 +15,8 @@ const validChanels = [
   'git-status',
   'git-checkout',
   'git-resolve-ref',
-  'git-reset-hard'
+  'git-reset-hard',
+  'git-change-message'
 ]
 
 contextBridge.exposeInMainWorld(

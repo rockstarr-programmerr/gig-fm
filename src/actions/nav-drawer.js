@@ -8,20 +8,18 @@ const { v4: uuidv4 } = require('uuid')
 ipcMain.on('add-new-repo', (event) => {
   dialog.showOpenDialog({ properties: ['openDirectory'] })
     .then(async result => {
-      let dir = undefined
+      if (result.canceled) return
 
-      if (!result.canceled) {
-        dir = result.filePaths[0]
-        await git.init({ fs, dir })
-        await git.setConfig({ fs, dir,  // TODO
-          path: 'user.name',
-          value: 'rockstar-programmer'
-        })
-        await git.setConfig({ fs, dir,  // TODO
-          path: 'user.email',
-          value: 'rockstarrprogrammerr@gmail.com'
-        })
-      }
+      const dir = result.filePaths[0]
+      await git.init({ fs, dir })
+      await git.setConfig({ fs, dir,  // TODO
+        path: 'user.name',
+        value: 'rockstar-programmer'
+      })
+      await git.setConfig({ fs, dir,  // TODO
+        path: 'user.email',
+        value: 'rockstarrprogrammerr@gmail.com'
+      })
 
       const id = uuidv4()  // unique id for the new repo
       const name = path.basename(dir)

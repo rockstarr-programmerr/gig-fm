@@ -69,3 +69,13 @@ ipcMain.handle('git-reset-hard', async (event, dir, commitId, branchName) => {
   fs.unlinkSync(indexDir)
   await git.checkout({ fs, dir, ref: branchName, force: true })
 })
+
+ipcMain.handle('git-change-message', async (event, dir, newMessage, branchName) => {
+  const headRef = await git.resolveRef({ fs, dir, ref: 'HEAD' })
+  const oldCommitObj = await git.readCommit({ fs, dir, oid: headRef })
+  const commit = oldCommitObj.commit
+  commit.message = newMessage
+  const newCommitObjOid = await git.writeCommit({ fs, dir, commit })
+  const headDir = path.resolve(dir, `.git/refs/heads/${branchName}`)
+  fs.writeFileSync(headDir, newCommitObjOid)
+})
