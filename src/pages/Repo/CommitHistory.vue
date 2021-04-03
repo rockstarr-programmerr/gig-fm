@@ -156,26 +156,38 @@ export default {
 }
 </script>
 
-<style lang="sass">
-@import 'vuetify/src/styles/styles.sass'
+<style scoped lang="scss">
+@import 'vuetify/src/styles/styles.sass';
 
-@include theme(commit-row) using ($material)
+$override-states: (
+  'states': (
+    'focus': 0.08,
+    'activated': 0.08
+  )
+);
+$material-light: map-deep-merge($material-light, $override-states);
+$material-dark: map-deep-merge($material-dark, $override-states);
+
+@include theme(commit-row) using ($material) {
   @include states($material)
+};
 
-$hover-padding: -12px
+$hover-padding: -12px;
 
-.commit-row
-  user-select: none
+.commit-row {
+  user-select: none;
 
-  &:before
-    background-color: currentColor
-    bottom: $hover-padding
-    left: $hover-padding
-    right: $hover-padding
-    top: $hover-padding
-    content: ''
-    opacity: 0
-    pointer-events: none
-    position: absolute
-    transition: $primary-transition
+  &:before {
+    background-color: currentColor;
+    bottom: $hover-padding;
+    left: $hover-padding;
+    right: $hover-padding;
+    top: $hover-padding;
+    content: '';
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: $primary-transition;
+  }
+}
 </style>

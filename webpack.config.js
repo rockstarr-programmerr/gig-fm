@@ -36,10 +36,7 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               implementation: require('sass'),
-              sassOptions: {
-                indentedSyntax: true
-              },
-              additionalData: "@import '@/styles/variables.scss'"
+              additionalData: "@import '@/styles/variables.scss';"
             }
           }
         ]
