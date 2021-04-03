@@ -12,9 +12,9 @@ export function formatDateTime (
 
   const dateTimeObj = new Date(dateTime)
   let formattedDateTime = (
-    dateTimeObj.getDate().toString().padStart(2, '0') + dateSeparator +
+    dateTimeObj.getFullYear() + dateSeparator +
     (dateTimeObj.getMonth() + 1).toString().padStart(2, '0') + dateSeparator +
-    dateTimeObj.getFullYear() + ' ' +
+    dateTimeObj.getDate().toString().padStart(2, '0') + ' ' +
     dateTimeObj.getHours().toString().padStart(2, '0') + timeSeparator +
     dateTimeObj.getMinutes().toString().padStart(2, '0')
   )
@@ -28,6 +28,7 @@ export function formatTimestamp (
   timestamp, dateSeparator, timeSeparator,
   includeSeconds, valueWhenNull
 ) {
+  timestamp *= 1000
   const date = new Date(timestamp)
   return formatDateTime(date, dateSeparator, timeSeparator, includeSeconds, valueWhenNull)
 }

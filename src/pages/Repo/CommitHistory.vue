@@ -81,7 +81,7 @@
       max-width="500"
     >
       <v-card>
-        <v-card-title>Confirm reset</v-card-title>
+        <v-card-title>Confirm reset!</v-card-title>
         <v-card-text>
           <p>
             By resetting to a past version, you <strong>lose</strong> all versions after it.
