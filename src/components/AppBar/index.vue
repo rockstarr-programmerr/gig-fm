@@ -2,6 +2,7 @@
   <v-app-bar
     app
     clipped-left
+    clipped-right
     flat
     height="30"
     class="draggable"

@@ -72,11 +72,13 @@
         </div>
       </v-card>
     </v-dialog>
+    <RepoSettings />
   </v-container>
 </template>
 
 <script>
 import LoadingSpinner from '@C/LoadingSpinner.vue'
+import RepoSettings from './RepoSettings.vue'
 import FilesChanged from './FilesChanged.vue'
 import CommitHistory from './CommitHistory.vue'
 import { Repo } from '@/store/repo.js'
@@ -91,7 +93,8 @@ export default {
   components: {
     FilesChanged,
     CommitHistory,
-    LoadingSpinner
+    LoadingSpinner,
+    RepoSettings
   },
   mixins: [
     loadingMixin

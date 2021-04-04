@@ -52,7 +52,7 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
-  name: 'NavDrawer',
+  name: 'NavDrawerLeft',
   computed: {
     ...mapState({
       repos: state => state.repo.repos

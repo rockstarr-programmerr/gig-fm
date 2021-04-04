@@ -31,13 +31,16 @@
             </p>
           </v-col>
           <v-col cols="9">
-            <v-row>
-              <v-col cols="11">
+            <div class="d-flex justify-space-between">
+              <div class="pr-3">
                 <p class="mb-0 text-body-1 gig-preserve-whitespace">{{ commit.message }}</p>
                 <p class="caption font-weight-light">{{ commit.author.name }} ({{ commit.author.email }})</p>
-              </v-col>
-              <v-col cols="1">
-                <v-menu nudge-bottom="30">
+              </div>
+              <div class="commit-actions">
+                <v-menu
+                  nudge-bottom="38"
+                  left
+                >
                   <template #activator="{ attrs, on }">
                     <v-icon
                       v-bind="attrs"
@@ -73,8 +76,8 @@
                     </v-list-item>
                   </v-list>
                 </v-menu>
-              </v-col>
-            </v-row>
+              </div>
+            </div>
           </v-col>
         </v-row>
       </v-timeline-item>
@@ -280,6 +283,7 @@ export default {
         .catch(alertError)
     },
     changeMessage () {
+      if (!this.$refs.changeMsgForm.validate()) return
       this['loading.start']()
       window.api.invoke('git-change-message', this.repo.dir, this.newMsg, 'master')
         .then(() => {
@@ -287,6 +291,7 @@ export default {
           this.changeMsgDialog = false
           this.newMsg = ''
           this.setCommits(this.repo)
+          this.$refs.changeMsgForm.resetValidation()
         })
         .catch(alertError)
         .finally(this['loading.stop'])
@@ -354,5 +359,9 @@ $hover-padding: -12px;
     position: absolute;
     transition: $primary-transition;
   }
+}
+
+.commit-actions {
+  width: 30px;
 }
 </style>
