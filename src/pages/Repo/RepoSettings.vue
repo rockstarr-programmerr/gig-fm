@@ -46,8 +46,11 @@
             color="primary"
             tile
             depressed
+            width="76"
+            @click="save"
           >
-            Save
+            <LoadingSpinner v-if="loading" />
+            <span v-else>Save</span>
           </v-btn>
         </div>
       </div>
@@ -56,14 +59,60 @@
 </template>
 
 <script>
+import LoadingSpinner from '@C/LoadingSpinner.vue'
+import { mapActions } from 'vuex'
+import { alertSuccess, alertError } from '@/utils/message.js'
+import { loadingMixin } from '@/mixins/loading.js'
+import { Repo } from '@/store/repo.js'
+
 export default {
   name: 'RepoSettings',
+  components: {
+    LoadingSpinner
+  },
+  mixins: [loadingMixin],
+  props: {
+    repo: {
+      type: Object,
+      default: () => new Repo
+    }
+  },
   data: () => ({
     mini: true,
     repoName: '',
     authorName: '',
     authorEmail: ''
-  })
+  }),
+  methods: {
+    ...mapActions('repo', [
+      'updateRepo'
+    ]),
+    save () {
+      this['loading.start']()
+      this.updateRepo({
+        id: this.repoId,
+        repoName: this.repoName,
+        authorName: this.authorName,
+        authorEmail: this.authorEmail,
+      })
+        .then(alertSuccess)
+        .catch(alertError)
+        .finally(this['loading.stop'])
+    },
+    setupData (repo) {
+      this.repoName = repo.name
+      this.authorName = repo.defaultAuthor.name
+      this.authorEmail = repo.defaultAuthor.email
+    }
+  },
+  mounted () {
+    this.setupData(this.repo)
+  },
+  watch: {
+    repo (repo) {
+      this.setupData(repo)
+    }
+  }
 }
 </script>
 

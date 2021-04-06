@@ -17,6 +17,18 @@ ipcMain.on('create-repo', (event, repo) => {
   store.set('repos', repos)
 })
 
+ipcMain.handle('update-repo', async (event, payload) => {
+  const { id, repoName, authorName, authorEmail } = payload
+  const repos = store.get('repos') || []
+  const repo = repos.find(repo => repo.id === id)
+  if (repo === undefined) return
+
+  repo.name = repoName || repo.name
+  repo.defaultAuthor.name = authorName || repo.defaultAuthor.name
+  repo.defaultAuthor.email = authorEmail || repo.defaultAuthor.email
+  store.set('repos', repos)
+})
+
 ipcMain.handle('git-commit', async (event, dir, message) => {
   // Here, we cannot do a simple "git add -A" and then "git commit". This is isomorphic-git's issue.
   // The author said: "For now though, the quickest way to implement a "git add -A"

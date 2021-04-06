@@ -4,6 +4,7 @@ const validChanels = [
   'add-new-repo',
   'get-repos',
   'create-repo',
+  'update-repo',
   'window-close',
   'window-minimize',
   'window-maximize',

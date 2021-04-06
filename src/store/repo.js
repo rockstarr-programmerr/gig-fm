@@ -4,6 +4,7 @@ export class Repo {
     this.id = repo.id || ''
     this.name = repo.name || ''
     this.dir = repo.dir || ''
+    this.defaultAuthor = repo.defaultAuthor || new Author
   }
 
   hasData () {
@@ -37,6 +38,15 @@ export default {
   mutations: {
     addRepo (state, repo) {
       state.repos.splice(0, 0, repo)
+    },
+    editRepo (state, payload) {
+      const { id, repoName, authorName, authorEmail } = payload
+      const repo = state.repos.find(repo => repo.id === id)
+      if (repo === undefined) return
+
+      repo.name = repoName || repo.name
+      repo.defaultAuthor.name = authorName || repo.defaultAuthor.name
+      repo.defaultAuthor.email = authorEmail || repo.defaultAuthor.email
     }
   },
   actions: {
@@ -52,6 +62,10 @@ export default {
       repo = new Repo(repo)
       commit('addRepo', repo)
       return repo
+    },
+    updateRepo ({ commit }, payload) {
+      window.api.invoke('update-repo', payload)
+      commit('editRepo', payload)
     }
   }
 }

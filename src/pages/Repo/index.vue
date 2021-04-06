@@ -72,7 +72,7 @@
         </div>
       </v-card>
     </v-dialog>
-    <RepoSettings />
+    <RepoSettings :repo="repo" />
   </v-container>
 </template>
 
