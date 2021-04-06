@@ -26,10 +26,11 @@ ipcMain.handle('update-repo', async (event, payload) => {
   repo.name = repoName || repo.name
   repo.defaultAuthor.name = authorName || repo.defaultAuthor.name
   repo.defaultAuthor.email = authorEmail || repo.defaultAuthor.email
+
   store.set('repos', repos)
 })
 
-ipcMain.handle('git-commit', async (event, dir, message) => {
+ipcMain.handle('git-commit', async (event, dir, message, authorName, authorEmail) => {
   // Here, we cannot do a simple "git add -A" and then "git commit". This is isomorphic-git's issue.
   // The author said: "For now though, the quickest way to implement a "git add -A"
   // would probably be to run statusMatrix and then loop through the results
@@ -46,7 +47,13 @@ ipcMain.handle('git-commit', async (event, dir, message) => {
   }).filter(promise => promise !== undefined)
 
   await Promise.all(promises)
-  await git.commit({ fs, dir, message })
+  await git.commit({
+    fs, dir, message,
+    author: {
+      name: authorName,
+      email: authorEmail
+    }
+  })
 })
 
 ipcMain.handle('git-log', async (event, dir, ref) => {

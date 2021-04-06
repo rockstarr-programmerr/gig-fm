@@ -27,17 +27,16 @@
             <v-text-field
               v-model="repoName"
               label="Repo name"
-              dense
             ></v-text-field>
             <v-text-field
               v-model="authorName"
               label="Your name"
-              dense
             ></v-text-field>
             <v-text-field
               v-model="authorEmail"
               label="Your email"
-              dense
+              :rules="[validEmail]"
+              validate-on-blur
             ></v-text-field>
           </v-form>
         </div>
@@ -64,6 +63,7 @@ import { mapActions } from 'vuex'
 import { alertSuccess, alertError } from '@/utils/message.js'
 import { loadingMixin } from '@/mixins/loading.js'
 import { Repo } from '@/store/repo.js'
+import { required, validEmail } from '@/utils/validate.js'
 
 export default {
   name: 'RepoSettings',
@@ -84,13 +84,16 @@ export default {
     authorEmail: ''
   }),
   methods: {
+    required,
+    validEmail,
     ...mapActions('repo', [
       'updateRepo'
     ]),
     save () {
+      if (!this.$refs.repoSettingsForm.validate()) return
       this['loading.start']()
       this.updateRepo({
-        id: this.repoId,
+        id: this.repo.id,
         repoName: this.repoName,
         authorName: this.authorName,
         authorEmail: this.authorEmail,

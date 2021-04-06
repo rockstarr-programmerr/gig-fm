@@ -10,6 +10,11 @@ export class Repo {
   hasData () {
     return this.id !== ''
   }
+
+  hasDefaultAuthor () {
+    return this.defaultAuthor.name !== '' &&
+           this.defaultAuthor.email !== ''
+  }
 }
 
 export class Author {

@@ -176,6 +176,7 @@ export default {
   },
   mounted () {
     this['loading.start']()
+    this.startWatchingStatus(this.repo)
   },
   beforeDestroy () {
     clearInterval(this.interval)

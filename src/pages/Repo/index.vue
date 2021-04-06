@@ -28,6 +28,7 @@
     <v-dialog
       v-model="commitDialog"
       max-width="500"
+      eager
     >
       <v-card>
         <v-card-title>Commit message</v-card-title>
@@ -37,9 +38,29 @@
               v-model="commitMsg"
               placeholder="A detailed message will save you a lot of time later."
               :autofocus="commitDialog"
-              hide-details="auto"
-              :rules="commitMsgRules"
+              :rules="[required]"
             ></v-textarea>
+            <div
+              v-if="!repo.hasDefaultAuthor()"
+              class="mt-5"
+            >
+              <v-icon class="mr-1">mdi-information-outline</v-icon>
+              <span>
+                Finish setup in the right sidebar so that
+                you don't have to enter the below information everytime.
+              </span>
+            </div>
+            <v-text-field
+              v-model="committerName"
+              label="Your name"
+              :rules="[required]"
+            ></v-text-field>
+            <v-text-field
+              v-model="committerEmail"
+              label="Your email"
+              :rules="[required, validEmail]"
+              validate-on-blur
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -85,7 +106,7 @@ import { Repo } from '@/store/repo.js'
 import { mapState } from 'vuex'
 import { alertSuccess, alertError } from '@/utils/message.js'
 import { loadingMixin } from '@/mixins/loading.js'
-import { required } from '@/utils/validate.js'
+import { required, validEmail } from '@/utils/validate.js'
 import { wait, randomChoice } from '@/utils/common.js'
 
 export default {
@@ -103,10 +124,10 @@ export default {
     id: String
   },
   data: () => ({
-    repo: new Repo,
     commitDialog: false,
     commitMsg: '',
-    commitMsgRules: [required],
+    committerName: '',
+    committerEmail: '',
     funnyLoading: false,
     loadingText: '',
     initialLoadingText: 'It may take a feel minutes if your project has many large files.',
@@ -122,14 +143,19 @@ export default {
   computed: {
     ...mapState({
       repos: state => state.repo.repos
-    })
+    }),
+    repo () {
+      return this.repos.find(repo => repo.id === this.id) || new Repo
+    }
   },
   methods: {
+    required,
+    validEmail,
     gitCommit () {
       if (this.loading) return
       if (!this.$refs.commitForm.validate()) return
       this['loading.start']()
-      window.api.invoke('git-commit', this.repo.dir, this.commitMsg)
+      window.api.invoke('git-commit', this.repo.dir, this.commitMsg, this.committerName, this.committerEmail)
         .then(() => {
           this.commitDialog = false
           this.commitMsg = ''
@@ -141,12 +167,6 @@ export default {
         .finally(this['loading.stop'])
 
       this.startFunnyLoadingText()
-    },
-    setRepo (id) {
-      const repo = this.repos.find(repo => repo.id === id)
-      if (repo !== undefined) {
-        this.repo = repo
-      }
     },
     async startFunnyLoadingText () {
       await wait(4000)
@@ -160,13 +180,21 @@ export default {
       this.loadingText = ''
     }
   },
-  mounted () {
-    this.setRepo(this.id)
-  },
   watch: {
-    id (id) {
-      this.setRepo(id)
+    'repo.defaultAuthor': {
+      deep: true,
+      handler (author) {
+        this.committerName = author.name
+        this.committerEmail = author.email
+      }
+    },
+    commitDialog () {
+      this.$refs.commitForm.resetValidation()
     }
+  },
+  mounted () {
+    this.committerName = this.repo.defaultAuthor.name
+    this.committerEmail = this.repo.defaultAuthor.email
   }
 }
 </script>

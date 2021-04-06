@@ -87,7 +87,7 @@
       v-model="page"
       :length="pageCount"
       :total-visible="7"
-      class="mb-9"
+      class="mb-7"
     ></v-pagination>
     <v-dialog
       v-model="confirmResetDialog"

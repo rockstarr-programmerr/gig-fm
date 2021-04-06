@@ -12,14 +12,6 @@ ipcMain.on('add-new-repo', (event) => {
 
       const dir = result.filePaths[0]
       await git.init({ fs, dir })
-      await git.setConfig({ fs, dir,  // TODO
-        path: 'user.name',
-        value: 'rockstar-programmer'
-      })
-      await git.setConfig({ fs, dir,  // TODO
-        path: 'user.email',
-        value: 'rockstarrprogrammerr@gmail.com'
-      })
 
       const id = uuidv4()  // unique id for the new repo
       const name = path.basename(dir)
