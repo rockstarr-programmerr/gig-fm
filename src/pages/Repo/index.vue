@@ -121,7 +121,7 @@ export default {
     loadingMixin
   ],
   props: {
-    id: String
+    id: [String, Number]
   },
   data: () => ({
     commitDialog: false,
@@ -145,7 +145,9 @@ export default {
       repos: state => state.repo.repos
     }),
     repo () {
-      return this.repos.find(repo => repo.id === this.id) || new Repo
+      // Here, we must use 2 equals instead of 3 equals
+      // because this.id is String (get from url params) while repo.id is Number (get from DB)
+      return this.repos.find(repo => repo.id == this.id) || new Repo
     }
   },
   methods: {

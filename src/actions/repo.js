@@ -2,32 +2,45 @@ const { ipcMain } = require('electron')
 const git = require('isomorphic-git')
 const fs = require('fs')
 const path = require('path')
-const ElectronStore = require('electron-store')
+const database = require('./database.js')
 
-const store = new ElectronStore
 
-ipcMain.handle('get-repos', async () => {
-  const repos = store.get('repos') || []
-  return repos
+ipcMain.on('get-repos', (event) => {
+  database.getAllRepos()
+    .then(rows => {
+      event.reply('get-repos', true, rows)
+    })
+    .catch(error => {
+      event.reply('get-repos', false)
+      console.error(error)
+    })
 })
 
 ipcMain.on('create-repo', (event, repo) => {
-  const repos = store.get('repos') || []
-  repos.splice(0, 0, repo)
-  store.set('repos', repos)
+  database.createRepo(repo.name, repo.dir)
+    .then(lastID => {
+      event.reply('create-repo', true, lastID)
+    })
+    .catch(error => {
+      event.reply('create-repo', false)
+      console.error(error)
+    })
 })
 
-ipcMain.handle('update-repo', async (event, payload) => {
-  const { id, repoName, authorName, authorEmail } = payload
-  const repos = store.get('repos') || []
-  const repo = repos.find(repo => repo.id === id)
-  if (repo === undefined) return
-
-  repo.name = repoName || repo.name
-  repo.defaultAuthor.name = authorName || repo.defaultAuthor.name
-  repo.defaultAuthor.email = authorEmail || repo.defaultAuthor.email
-
-  store.set('repos', repos)
+ipcMain.on('update-repo', (event, payload) => {
+  database.updateRepo(
+    payload.id,
+    payload.repoName,
+    payload.authorName,
+    payload.authorEmail
+  )
+    .then(() => {
+      event.reply('update-repo', true)
+    })
+    .catch(error => {
+      event.reply('create-repo', false)
+      console.error(error)
+    })
 })
 
 ipcMain.handle('git-commit', async (event, dir, message, authorName, authorEmail) => {

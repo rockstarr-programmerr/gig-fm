@@ -43,13 +43,19 @@
           <v-list-item-title>{{ repo.name }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item v-if="noRepo">Nothing yet</v-list-item>
+      <v-list-item
+        v-if="noRepo"
+        class="text-body-2 font-weight-light font-italic"
+      >
+        (Nothing yet)
+      </v-list-item>
     </v-list-group>
   </v-navigation-drawer>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { alertError } from '@/utils/message.js'
 
 export default {
   name: 'NavDrawerLeft',
@@ -66,12 +72,15 @@ export default {
       'createRepo'
     ]),
     addNewRepo () {
+      window.api.send('add-new-repo')
       window.api.receive('add-new-repo', async repo => {
         if (repo === undefined) return
-        await this.createRepo(repo)
-        this.$router.push({ name: 'Repo', params: { id: repo.id } })
+        this.createRepo(repo)
+          .then(lastId => {
+            this.$router.push({ name: 'Repo', params: { id: lastId } })
+          })
+          .catch(alertError)
       })
-      window.api.send('add-new-repo')
     },
     goHome () {
       if (this.$route.name !== 'Home') {

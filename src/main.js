@@ -1,9 +1,14 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
+const database = require('./actions/database.js')
 
-require('electron-reload')(__dirname, {
-  electron: path.join(__dirname, '..', 'node_modules', '.bin', 'electron')
-})
+/**
+ * Actions
+ */
+require('./actions/app-bar.js')
+require('./actions/nav-drawer.js')
+require('./actions/repo.js')
+
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -31,11 +36,13 @@ function createWindow () {
   })
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  await database.setup()
   createWindow()
 
-  app.on('activate', () => {
+  app.on('activate', async () => {
     if (BrowserWindow.getAllWindows().length === 0) {
+      await database.setup()
       createWindow()
     }
   })
@@ -46,10 +53,3 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
-
-/**
- * Actions
- */
-require('./actions/app-bar.js')
-require('./actions/nav-drawer.js')
-require('./actions/repo.js')

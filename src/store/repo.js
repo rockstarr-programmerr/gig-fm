@@ -1,14 +1,14 @@
 export class Repo {
   constructor (repo) {
     if (repo === undefined) repo = {}
-    this.id = repo.id || ''
+    this.id = repo.id || null
     this.name = repo.name || ''
     this.dir = repo.dir || ''
     this.defaultAuthor = repo.defaultAuthor || new Author
   }
 
   hasData () {
-    return this.id !== ''
+    return this.id !== null
   }
 
   hasDefaultAuthor () {
@@ -38,7 +38,10 @@ export class Commit {
 export default {
   namespaced: true,
   state: () => ({
-    repos: []
+    repos: [],
+    gettingRepos: false,
+    creatingRepo: false,
+    updatingRepo: false,
   }),
   mutations: {
     addRepo (state, repo) {
@@ -52,25 +55,75 @@ export default {
       repo.name = repoName || repo.name
       repo.defaultAuthor.name = authorName || repo.defaultAuthor.name
       repo.defaultAuthor.email = authorEmail || repo.defaultAuthor.email
+    },
+    setGettingRepos (state, status) {
+      state.gettingRepos = status
+    },
+    setCreatingRepo (state, status) {
+      state.creatingRepo = status
+    },
+    setUpdatingRepo (state, status) {
+      state.updatingRepo = status
     }
   },
   actions: {
-    async initRepos ({ commit }) {
-      const repos = await window.api.invoke('get-repos') || []
-      repos.forEach(repo => {
-        repo = new Repo(repo)
-        commit('addRepo', repo)
+    initRepos ({ commit }) {
+      return new Promise((resolve, reject) => {
+        commit('setGettingRepos', true)
+
+        window.api.send('get-repos') || []
+        window.api.receive('get-repos', (isSuccess, repos) => {
+          if (isSuccess) {
+            repos.forEach(repo => {
+              repo = new Repo(repo)
+              commit('addRepo', repo)
+            })
+            resolve()
+          } else {
+            reject()
+          }
+
+          commit('setGettingRepos', false)
+        })
       })
     },
+
     createRepo ({ commit }, repo) {
-      window.api.send('create-repo', repo)
-      repo = new Repo(repo)
-      commit('addRepo', repo)
-      return repo
+      return new Promise((resolve, reject) => {
+        commit('setCreatingRepo', true)
+
+        window.api.send('create-repo', repo)
+        window.api.receive('create-repo', (isSuccess, lastId) => {
+          if (isSuccess) {
+            repo.id = lastId
+            repo = new Repo(repo)
+            commit('addRepo', repo)
+            resolve(lastId)
+          } else {
+            reject()
+          }
+
+          commit('setCreatingRepo', false)
+        })
+      })
     },
+
     updateRepo ({ commit }, payload) {
-      window.api.invoke('update-repo', payload)
-      commit('editRepo', payload)
+      return new Promise((resolve, reject) => {
+        commit('setUpdatingRepo', true)
+
+        window.api.send('update-repo', payload)
+        window.api.receive('update-repo', (isSuccess) => {
+          if (isSuccess) {
+            commit('editRepo', payload)
+            resolve()
+          } else {
+            reject()
+          }
+
+          commit('setUpdatingRepo', false)
+        })
+      })
     }
   }
 }

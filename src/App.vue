@@ -66,9 +66,14 @@ export default {
       setAlertShow: 'alert/setShow'
     })
   },
-  async created () {
-    await this.initRepos()
-    this.initCompleted = true
+  created () {
+    this.initRepos()
+      .then(() => {
+        this.initCompleted = true
+      })
+      .catch(() => {
+        alert('Bad luck! Something went wrong, please try again later.')
+      })
   },
   watch: {
     $route() {

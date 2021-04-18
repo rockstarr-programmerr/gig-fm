@@ -2,7 +2,6 @@ const { ipcMain, dialog } = require('electron')
 const git = require('isomorphic-git')
 const fs = require('fs')
 const path = require('path')
-const { v4: uuidv4 } = require('uuid')
 
 
 ipcMain.on('add-new-repo', (event) => {
@@ -13,9 +12,8 @@ ipcMain.on('add-new-repo', (event) => {
       const dir = result.filePaths[0]
       await git.init({ fs, dir })
 
-      const id = uuidv4()  // unique id for the new repo
       const name = path.basename(dir)
-      event.reply('add-new-repo', { id, dir, name })
+      event.reply('add-new-repo', { dir, name })
     })
     .catch(console.error)
 })
