@@ -8,6 +8,7 @@ const database = require('./actions/database.js')
 require('./actions/app-bar.js')
 require('./actions/nav-drawer.js')
 require('./actions/repo.js')
+require('./actions/user-preferences.js')
 
 
 function createWindow () {

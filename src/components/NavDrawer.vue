@@ -10,9 +10,52 @@
           @click="goHome"
           class="gig-clickable"
         >
-          GigFM
+          Home
         </v-list-item-title>
       </v-list-item-content>
+      <v-list-item-action>
+        <v-menu
+          right
+          nudge-bottom="38"
+        >
+          <template #activator="{ on, attrs }">
+            <v-icon
+              v-on="on"
+              v-bind="attrs"
+            >
+              mdi-dots-vertical
+            </v-icon>
+          </template>
+          <v-list dense>
+            <v-list-item
+              link
+              :to="{ name: 'Settings' }"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  Settings
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-icon small>mdi-settings-outline</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+            <v-list-item
+              link
+              :to="{ name: 'Help' }"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  Help
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-icon small>mdi-help-circle-outline</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-list-item-action>
     </v-list-item>
     <v-list-item>
       <v-btn

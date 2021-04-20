@@ -11,6 +11,8 @@ const validChanels = [
   'window-unmaximize',
   'on-window-maximized',
   'on-window-unmaximized',
+  'save-user-preferences',
+  'get-user-preferences',
   'git-commit',
   'git-log',
   'git-status',

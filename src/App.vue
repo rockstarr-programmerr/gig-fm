@@ -64,7 +64,13 @@ export default {
     ]),
     ...mapMutations({
       setAlertShow: 'alert/setShow'
-    })
+    }),
+    initTheme () {
+      window.api.invoke('get-user-preferences')
+        .then(preferences => {
+          this.$vuetify.theme.dark = preferences.darkTheme
+        })
+    }
   },
   created () {
     this.initRepos()
@@ -74,6 +80,8 @@ export default {
       .catch(() => {
         alert('Bad luck! Something went wrong, please try again later.')
       })
+
+    this.initTheme()
   },
   watch: {
     $route() {

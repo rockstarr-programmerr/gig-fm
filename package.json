@@ -25,6 +25,7 @@
     "webpack-cli": "^4.5.0"
   },
   "dependencies": {
+    "electron-store": "^8.0.0",
     "isomorphic-git": "^1.8.1",
     "sqlite3": "^5.0.2",
     "vue": "^2.6.12",
