@@ -72,10 +72,19 @@ export default {
         commit('setGettingRepos', true)
 
         window.api.send('get-repos') || []
-        window.api.receive('get-repos', (isSuccess, repos) => {
+        window.api.receive('get-repos', (isSuccess, results) => {
           if (isSuccess) {
-            repos.forEach(repo => {
-              repo = new Repo(repo)
+            results.forEach(result => {
+              const author = new Author({
+                name: result.author_name,
+                email: result.author_email
+              })
+              const repo = new Repo({
+                id: result.id,
+                name: result.name,
+                dir: result.dir,
+                defaultAuthor: author
+              })
               commit('addRepo', repo)
             })
             resolve()
