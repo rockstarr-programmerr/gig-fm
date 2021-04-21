@@ -94,9 +94,25 @@
         <strong>permanently</strong>. Think twice before clicking the confirm button.
       </blockquote>
       <p>
+        <strong>Important!</strong> You may (or may not) see a folder called ".git" created inside your project. <br>
+        GigFM need this folder to work, <strong>don't delete it</strong>.
+      </p>
+      <p>
+        <v-img
+          :src="require('@/assets/intro-img-8.png')"
+          max-width="300"
+          max-height="200"
+          contain
+          class="add-border"
+        ></v-img>
+      </p>
+      <p>
         That's it, now click "New repo" and start version controlling your project
         {{ randomHappyEmoji() }}.
       </p>
+    </section>
+    <section>
+      <p class="caption">Made by <strong>TtheTtruth</strong> with lots of passion.</p>
     </section>
   </v-container>
 </template>
