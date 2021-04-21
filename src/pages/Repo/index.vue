@@ -11,6 +11,7 @@
             tile
             depressed
             class="ml-5"
+            :disabled="!enableCommit"
             @click="commitDialog = true"
           >
             Commit
@@ -22,7 +23,11 @@
       </v-col>
       <v-col cols="12">
         <h2>Commit history</h2>
-        <CommitHistory :repo="repo" ref="commitHistory" />
+        <CommitHistory
+          ref="commitHistory"
+          :repo="repo"
+          @current-commit-changed="onCurrentCommitChanged"
+        />
       </v-col>
     </v-row>
     <v-dialog
@@ -138,7 +143,8 @@ export default {
       "Warming up with arpeggios...",
       "Singer arrived late...",
       "What the hell is in your project?"
-    ]
+    ],
+    enableCommit: true
   }),
   computed: {
     ...mapState({
@@ -180,6 +186,9 @@ export default {
       }
       this.funnyLoading = false
       this.loadingText = ''
+    },
+    onCurrentCommitChanged (isLatestCommit) {
+      this.enableCommit = isLatestCommit
     }
   },
   watch: {

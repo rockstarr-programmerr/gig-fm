@@ -63,7 +63,7 @@
                       :disabled="commit.id === firstCommitId"
                     >
                       <v-list-item-content>
-                        <v-list-item-title>Reset to this commit</v-list-item-title>
+                        <v-list-item-title>Reset to this version</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item
@@ -189,6 +189,7 @@ import { required } from '@/utils/validate.js'
 export default {
   name: 'CommitHistory',
   inject: ['theme'],
+  emits: ['current-commit-changed'],
   props: {
     repo: {
       required: true,
@@ -317,6 +318,10 @@ export default {
     repo (repo) {
       if (!repo.hasData()) return
       this.setCommits(repo)
+    },
+    currentCommitId (id) {
+      const isFirstCommit = id === this.firstCommitId
+      this.$emit('current-commit-changed', isFirstCommit)
     }
   },
   mounted () {
