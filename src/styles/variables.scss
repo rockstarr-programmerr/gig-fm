@@ -5,5 +5,14 @@ $material-light: (
   'background': var(--v-primary-lighten7),
   'navigation-drawer': var(--v-primary-lighten6),
   'cards': var(--v-primary-lighten7),
-  'app-bar': var(--v-primary-lighten5)
+  'app-bar': var(--v-primary-lighten5),
+  'text': (
+    'button': #FFFFFF
+  )
 );
+
+$material-dark: (
+  'text': (
+    'button': #000000
+  )
+)

@@ -25,7 +25,14 @@ const opts = {
         secondary: {
           base: '#ff2200'
         },
-        anchor: '#ff2200'
+        anchor: '#ff2200',
+        success: '#ffa200',
+        error: '#ff2200',
+      },
+      dark: {
+        primary: {
+          base: '#ffe183'
+        }
       }
     }
   }

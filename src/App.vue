@@ -97,7 +97,23 @@ export default {
 }
 </style>
 
-<style>
+<style lang="scss">
+@import 'vuetify/src/styles/styles.sass';
+
+@include theme(v-btn) using ($material) {
+  &:not(.v-btn--outlined) {
+    &.primary,
+    &.secondary,
+    &.accent,
+    &.success,
+    &.error,
+    &.warning,
+    &.info {
+      color: map-deep-get($material, 'text', 'button');
+    }
+  }
+}
+
 ::-webkit-scrollbar {
   display: none;
 }

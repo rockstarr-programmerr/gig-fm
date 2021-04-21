@@ -4,7 +4,7 @@
     <v-divider></v-divider>
     <v-row align="center">
       <v-col cols="3">
-        Dark theme
+        Dark mode
       </v-col>
       <v-col cols="9">
         <v-switch
