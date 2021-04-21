@@ -19,14 +19,18 @@
         </div>
       </v-col>
       <v-col cols="12">
-        <FilesChanged :repo="repo" />
+        <FilesChanged
+          :repo="repo"
+          :is-latest-commit="isLatestCommit"
+          @git-restore="onGitRestore"
+        />
       </v-col>
       <v-col cols="12">
         <h2>Commit history</h2>
         <CommitHistory
           ref="commitHistory"
           :repo="repo"
-          @current-commit-changed="onCurrentCommitChanged"
+          @latest-commit-updated="onLatestCommitUpdated"
         />
       </v-col>
     </v-row>
@@ -144,7 +148,8 @@ export default {
       "Singer arrived late...",
       "What the hell is in your project?"
     ],
-    enableCommit: true
+    enableCommit: true,
+    isLatestCommit: true
   }),
   computed: {
     ...mapState({
@@ -187,8 +192,12 @@ export default {
       this.funnyLoading = false
       this.loadingText = ''
     },
-    onCurrentCommitChanged (isLatestCommit) {
+    onLatestCommitUpdated (isLatestCommit) {
+      this.isLatestCommit = isLatestCommit
       this.enableCommit = isLatestCommit
+    },
+    onGitRestore () {
+      this.$refs.commitHistory.setCurrentCommit()
     }
   },
   watch: {

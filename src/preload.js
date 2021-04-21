@@ -13,13 +13,15 @@ const validChanels = [
   'on-window-unmaximized',
   'save-user-preferences',
   'get-user-preferences',
+  'remove-files',
   'git-commit',
   'git-log',
   'git-status',
   'git-checkout',
   'git-resolve-ref',
   'git-reset-hard',
-  'git-change-message'
+  'git-change-message',
+  'git-restore'
 ]
 
 contextBridge.exposeInMainWorld(

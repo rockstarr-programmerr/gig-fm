@@ -111,3 +111,8 @@ ipcMain.handle('git-change-message', async (event, dir, newMessage, branchName) 
   const headDir = path.resolve(dir, `.git/refs/heads/${branchName}`)
   fs.writeFileSync(headDir, newCommitObjOid)
 })
+
+ipcMain.handle('git-restore', async (event, dir, branchName) => {
+  const result = await git.checkout({ fs, dir, ref: branchName, force: true })
+  return result
+})

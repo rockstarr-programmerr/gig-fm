@@ -189,7 +189,7 @@ import { required } from '@/utils/validate.js'
 export default {
   name: 'CommitHistory',
   inject: ['theme'],
-  emits: ['current-commit-changed'],
+  emits: ['latest-commit-updated'],
   props: {
     repo: {
       required: true,
@@ -231,6 +231,11 @@ export default {
       } else {
         return ''
       }
+    },
+    isFirstCommit () {
+      const noCommits = this.commits.length === 0
+      const currentCommitIsFirstCommit = this.currentCommitId === this.firstCommitId
+      return noCommits || currentCommitIsFirstCommit
     }
   },
   methods: {
@@ -319,9 +324,8 @@ export default {
       if (!repo.hasData()) return
       this.setCommits(repo)
     },
-    currentCommitId (id) {
-      const isFirstCommit = id === this.firstCommitId
-      this.$emit('current-commit-changed', isFirstCommit)
+    isFirstCommit (value) {
+      this.$emit('latest-commit-updated', value)
     }
   },
   mounted () {

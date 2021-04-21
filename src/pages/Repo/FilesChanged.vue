@@ -8,6 +8,33 @@
   </div>
   <div v-else>
     <div
+      v-if="warning"
+      class="mb-5"
+    >
+      <div class="error--text">
+        <p>
+          <v-icon color="error">mdi-exclamation-thick</v-icon>
+          We detected that you changed something in your project while checking out a past version.
+        <p>
+          This is <strong>dangerous</strong> and can lead to <strong>corruption</strong> of your project. <br>
+          Please undo your changes immediately, you must go back to the latest version to make changes.
+        </p>
+        <p>
+          Remember the rule when time travelling: <strong>Don't alter the past!</strong>
+        </p>
+      </div>
+      <div>
+        <v-btn
+          color="error"
+          tile
+          depressed
+          @click="restoreConfirm = true"
+        >
+          Undo changes
+        </v-btn>
+      </div>
+    </div>
+    <div
       v-if="newTreeItems.length > 0"
       class="mb-3"
     >
@@ -79,6 +106,43 @@
         </template>
       </v-treeview>
     </div>
+    <v-dialog
+      v-model="restoreConfirm"
+      max-width="500"
+      eager
+    >
+      <v-card>
+        <v-card-title>
+          Confirm undo changes
+        </v-card-title>
+        <v-card-text>
+          This will undo current changes made in every file of your project. <br>
+          If any change matters to you, note them down somewhere first before confirming.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            depressed
+            text
+            @click="restoreConfirm = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            depressed
+            text
+            width="94"
+            @click="gitRestore"
+          >
+            <LoadingSpinner v-if="restoring" />
+            <span v-else>
+              Confirm
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -87,15 +151,18 @@ import { Repo } from '@/store/repo.js'
 import { TreeViewBuilder } from '@/utils/tree-view-builder.js'
 import { arrayEqual } from '@/utils/common.js'
 import { loadingMixin } from '@/mixins/loading.js'
+import { alertSuccess, alertError } from '@/utils/message.js'
 import LoadingSpinner from '@C/LoadingSpinner.vue'
 
 export default {
   name: 'FilesChanged',
+  emits: ['git-restore'],
   props: {
     repo: {
       required: true,
       default: () => new Repo
-    }
+    },
+    isLatestCommit: Boolean
   },
   components: {
     LoadingSpinner
@@ -108,13 +175,18 @@ export default {
     deletedFiles: [],
     newTreeItems: [],
     changedTreeItems: [],
-    deletedTreeItems: []
+    deletedTreeItems: [],
+    restoreConfirm: false,
+    restoring: false
   }),
   computed: {
     repoClean () {
       return this.newTreeItems.length === 0 &&
              this.changedTreeItems.length === 0 &&
              this.deletedTreeItems.length === 0
+    },
+    warning () {
+      return !this.isLatestCommit && !this.repoClean
     }
   },
   methods: {
@@ -144,6 +216,25 @@ export default {
       this.interval = window.setInterval(() => {
         window.api.send('git-status', repo.dir)
       }, 1000)
+    },
+    gitRestore () {
+      this.restoring = true
+
+      const promises = [
+        window.api.invoke('remove-files', this.newFiles, this.repo.dir),
+        window.api.invoke('git-restore', this.repo.dir, 'master')
+      ]
+
+      Promise.all(promises)
+        .then(() => {
+          alertSuccess()
+          this.$emit('git-restore')
+        })
+        .catch(alertError)
+        .finally(() => {
+          this.restoring = false
+          this.restoreConfirm = false
+        })
     }
   },
   watch: {
