@@ -8,7 +8,7 @@ function setup () {
       CREATE TABLE IF NOT EXISTS repo (
         id INTEGER PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
-        dir VARCHAR(255) NOT NULL,
+        dir VARCHAR(255) NOT NULL UNIQUE,
         author_name VARCHAR(255) NOT NULL DEFAULT '',
         author_email VARCHAR(255) NOT NULL DEFAULT ''
       );
@@ -94,11 +94,28 @@ function getAllRepos () {
   })
 }
 
+function deleteRepo (id) {
+  return new Promise((resolve, reject) => {
+    db.run(
+      'DELETE FROM repo WHERE id = ?;',
+      [id],
+      function (error) {
+        if (error === null) {
+          resolve()
+        } else {
+          reject(error)
+        }
+      }
+    )
+  })
+}
+
 
 module.exports = {
   db,
   setup,
   createRepo,
   updateRepo,
-  getAllRepos
+  getAllRepos,
+  deleteRepo
 }

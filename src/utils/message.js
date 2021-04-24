@@ -19,9 +19,12 @@ export const messages = {
 
 export function alertSuccess (msg) {
   if (msg === undefined) msg = messages.successs()
+  else msg += ` ${randomHappyEmoji()}`
   store.dispatch('alert/success', msg)
 }
 
-export function alertError () {
-  store.dispatch('alert/error', messages.errorOccurred())
+export function alertError (msg) {
+  if (msg === undefined) msg = messages.errorOccurred()
+  else msg += ` ${randomSadEmoji()}`
+  store.dispatch('alert/error', msg)
 }

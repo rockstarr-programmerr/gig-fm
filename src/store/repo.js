@@ -42,6 +42,7 @@ export default {
     gettingRepos: false,
     creatingRepo: false,
     updatingRepo: false,
+    deletingRepo: false
   }),
   mutations: {
     addRepo (state, repo) {
@@ -56,6 +57,9 @@ export default {
       repo.defaultAuthor.name = authorName || repo.defaultAuthor.name
       repo.defaultAuthor.email = authorEmail || repo.defaultAuthor.email
     },
+    removeRepo (state, id) {
+      state.repos = state.repos.filter(repo => repo.id !== id)
+    },
     setGettingRepos (state, status) {
       state.gettingRepos = status
     },
@@ -64,6 +68,9 @@ export default {
     },
     setUpdatingRepo (state, status) {
       state.updatingRepo = status
+    },
+    setDeletingRepo (state, status) {
+      state.deletingRepo = status
     }
   },
   actions: {
@@ -102,14 +109,14 @@ export default {
         commit('setCreatingRepo', true)
 
         window.api.send('create-repo', repo)
-        window.api.receive('create-repo', (isSuccess, lastId) => {
+        window.api.receive('create-repo', (isSuccess, payload) => {
           if (isSuccess) {
-            repo.id = lastId
+            repo.id = payload  // In this case, `payload` is the created ID
             repo = new Repo(repo)
             commit('addRepo', repo)
-            resolve(lastId)
+            resolve(payload)
           } else {
-            reject()
+            reject(payload)  // In this case, `payload` is the error code
           }
 
           commit('setCreatingRepo', false)
@@ -132,6 +139,24 @@ export default {
 
           commit('setUpdatingRepo', false)
         })
+      })
+    },
+
+    deleteRepo ({ commit }, repo) {
+      return new Promise((resolve, reject) => {
+        commit('setDeletingRepo', true)
+
+        window.api.invoke('delete-repo', repo)
+          .then(() => {
+            commit('removeRepo', repo.id)
+            resolve()
+          })
+          .catch(() => {
+            reject()
+          })
+          .finally(() => {
+            commit('setDeletingRepo', false)
+          })
       })
     }
   }

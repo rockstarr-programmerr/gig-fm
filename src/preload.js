@@ -14,6 +14,7 @@ const validChanels = [
   'save-user-preferences',
   'get-user-preferences',
   'remove-files',
+  'delete-repo',
   'git-commit',
   'git-log',
   'git-status',

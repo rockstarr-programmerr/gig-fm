@@ -29,6 +29,19 @@
           <v-list dense>
             <v-list-item
               link
+              :to="{ name: 'RepoList' }"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  Your repos
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-icon small>mdi-source-branch</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+            <v-list-item
+              link
               :to="{ name: 'Settings' }"
             >
               <v-list-item-content>
@@ -73,7 +86,7 @@
     >
       <template v-slot:activator>
         <v-list-item-title>
-          Your repos
+          My repos
         </v-list-item-title>
       </template>
       <v-list-item
@@ -122,7 +135,13 @@ export default {
           .then(lastId => {
             this.$router.push({ name: 'Repo', params: { id: lastId } })
           })
-          .catch(alertError)
+          .catch(errorCode => {
+            if (errorCode === 'REPO_EXISTS') {
+              alertError("You've already created this repo.")
+            } else {
+              alertError()
+            }
+          })
       })
     },
     goHome () {

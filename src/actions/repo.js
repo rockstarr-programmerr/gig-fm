@@ -22,8 +22,15 @@ ipcMain.on('create-repo', (event, repo) => {
       event.reply('create-repo', true, lastID)
     })
     .catch(error => {
-      event.reply('create-repo', false)
-      console.error(error)
+      let errorCode
+      if (error.code === 'SQLITE_CONSTRAINT') {
+        errorCode = 'REPO_EXISTS'
+      }
+      event.reply('create-repo', false, errorCode)
+
+      if (errorCode === undefined) {  // Unknown error
+        console.error(errors)
+      }
     })
 })
 
@@ -115,4 +122,15 @@ ipcMain.handle('git-change-message', async (event, dir, newMessage, branchName) 
 ipcMain.handle('git-restore', async (event, dir, branchName) => {
   const result = await git.checkout({ fs, dir, ref: branchName, force: true })
   return result
+})
+
+ipcMain.handle('delete-repo', async (event, repo) => {
+  const { id, dir } = repo
+  const gitDir = path.join(dir, '.git')
+  try {
+    await database.deleteRepo(id)
+    fs.rmSync(gitDir, { recursive: true, force: true })
+  } catch (error) {
+    console.error(error)
+  }
 })

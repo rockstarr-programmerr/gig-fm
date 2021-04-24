@@ -4,6 +4,7 @@ import { prefixWith } from './utils.js'
 
 import Home from '../pages/Home/index.vue'
 import Repo from '../pages/Repo/index.vue'
+import RepoList from '../pages/RepoList/index.vue'
 import Settings from '../pages/Settings/index.vue'
 import Help from '../pages/Help/index.vue'
 
@@ -25,6 +26,11 @@ const routes = [
     path: '/help',
     name: 'Help',
     component: Help
+  },
+  {
+    path: '/repo-list',
+    name: 'RepoList',
+    component: RepoList
   },
   ...prefixWith('/repo', [
     {

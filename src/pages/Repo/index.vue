@@ -1,6 +1,9 @@
 <template>
   <v-container>
     <h1>Repo: <span>{{ repo.name }}</span></h1>
+    <span class="caption">
+      Location: <span class="font-weight-light">{{ repo.dir }}</span>
+    </span>
     <v-divider></v-divider>
     <v-row class="mt-5">
       <v-col cols="12">

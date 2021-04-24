@@ -1,0 +1,144 @@
+<template>
+  <v-container>
+    <h1>Your repos</h1>
+    <v-divider></v-divider>
+    <v-row>
+      <v-col>
+        <v-list>
+          <v-list-item
+            v-for="(repo, index) of repos"
+            :key="repo.id"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ index + 1 }}.
+                {{ repo.name }}
+              </v-list-item-title>
+            </v-list-item-content>
+            <v-list-item-action>
+              <div>
+                <v-icon
+                  @click="$router.push({
+                    name: 'Repo',
+                    params: { id: repo.id }
+                  })"
+                >
+                  mdi-arrow-right-bold-hexagon-outline
+                </v-icon>
+                <v-icon
+                  class="ml-1"
+                  @click="openDeleteConfirmDialog(repo)"
+                >
+                  mdi-delete-outline
+                </v-icon>
+              </div>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+        <span
+          v-if="repos.length === 0"
+          class="font-weight-light font-italic"
+        >
+          (Nothing yet)
+        </span>
+      </v-col>
+    </v-row>
+    <v-dialog
+      v-model="deleteConfirm"
+      max-width="500"
+      eager
+    >
+      <v-card>
+        <v-card-title>
+          Confirm delete repo
+        </v-card-title>
+        <v-card-text>
+          <p>Are you sure you want to delete <strong>{{ repoToDelete.name }}</strong> repo?</p>
+          <p>
+            Your version history will be lost, but your project <strong>will not be deleted</strong>.
+          </p>
+          <p>
+            If you don't need to track versions anymore, deleting a repo can save some disk space.
+          </p>
+          <p>
+            <span class="warning--text">Warning!</span>
+            If you delete a repo while checking out a past version, you'll stuck there forever.
+            Please make sure you've checked out to the latest version first.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            depressed
+            text
+            @click="deleteConfirm = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            depressed
+            text
+            width="81"
+            @click="executeDeleteRepo"
+          >
+            <LoadingSpinner v-if="loading" />
+            <span v-else>
+              Confirm
+            </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>
+
+<script>
+import LoadingSpinner from '@C/LoadingSpinner.vue'
+import { mapState, mapActions } from 'vuex'
+import { Repo } from '@/store/repo.js'
+import { loadingMixin } from '@/mixins/loading.js'
+import { alertSuccess, alertError } from '@/utils/message.js'
+
+export default {
+  name: 'RepoList',
+  components: {
+    LoadingSpinner
+  },
+  mixins: [
+    loadingMixin
+  ],
+  data: () => ({
+    deleteConfirm: false,
+    repoToDelete: new Repo
+  }),
+  computed: {
+    ...mapState({
+      repos: state => state.repo.repos
+    })
+  },
+  methods: {
+    ...mapActions('repo', [
+      'deleteRepo'
+    ]),
+    openDeleteConfirmDialog (repo) {
+      this.repoToDelete = repo
+      this.deleteConfirm = true
+    },
+    executeDeleteRepo () {
+      this['loading.start']()
+      this.deleteRepo(this.repoToDelete)
+        .then(alertSuccess)
+        .catch(alertError)
+        .finally(() => {
+          this['loading.stop']()
+          this.deleteConfirm = false
+        })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
