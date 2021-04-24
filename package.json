@@ -87,7 +87,10 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "installerIcon": "src/assets/logo.ico",
-      "uninstallerIcon": "src/assets/logo.ico"
+      "uninstallerIcon": "src/assets/logo.ico",
+      "createStartMenuShortcut": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "GigFM"
     },
     "directories": {
       "output": "dist_installer"
