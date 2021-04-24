@@ -1,12 +1,25 @@
 <template>
   <v-container>
-    <h1>Your repos</h1>
+    <div class="d-flex justify-space-between">
+      <h1>Your repos</h1>
+      <div class="search-box">
+        <v-text-field
+          v-model="searchText"
+          label="Search"
+          prepend-inner-icon="mdi-magnify"
+          hide-details
+          outlined
+          dense
+          clearable
+        ></v-text-field>
+      </div>
+    </div>
     <v-divider></v-divider>
     <v-row>
-      <v-col>
+      <v-col cols="12">
         <v-list>
           <v-list-item
-            v-for="(repo, index) of repos"
+            v-for="(repo, index) of filteredRepos"
             :key="repo.id"
           >
             <v-list-item-content>
@@ -110,12 +123,21 @@ export default {
   ],
   data: () => ({
     deleteConfirm: false,
-    repoToDelete: new Repo
+    repoToDelete: new Repo,
+    searchText: ''
   }),
   computed: {
     ...mapState({
       repos: state => state.repo.repos
-    })
+    }),
+    filteredRepos () {
+      // Using input's clear icon change searchText to null
+      if (this.searchText === '' || this.searchText === null || this.searchText === undefined) {
+        return this.repos
+      } else {
+        return this.repos.filter(repo => repo.name.includes(this.searchText))
+      }
+    }
   },
   methods: {
     ...mapActions('repo', [
@@ -140,5 +162,7 @@ export default {
 </script>
 
 <style scoped>
-
+.search-box {
+  width: 300px;
+}
 </style>
