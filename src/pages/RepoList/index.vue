@@ -49,10 +49,10 @@
           </v-list-item>
         </v-list>
         <span
-          v-if="repos.length === 0"
+          v-if="filteredRepos.length === 0"
           class="font-weight-light font-italic"
         >
-          (Nothing yet)
+          (No repo)
         </span>
       </v-col>
     </v-row>

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1>Welcome to GigFM</h1>
+    <h1>Home</h1>
     <v-divider></v-divider>
     <section class="mt-5">
       <p>GigFM helps you control versions of your project.</p>

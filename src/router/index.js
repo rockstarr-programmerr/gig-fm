@@ -47,4 +47,9 @@ const router = new VueRouter({
   routes
 })
 
+router.afterEach((to, from) => {
+  if (to.fullPath === from.fullPath) return
+  window.api.invoke('save-appdata', 'last-visited-route', to.fullPath)
+})
+
 export default router

@@ -26,6 +26,34 @@
           </v-icon>
         </template>
       </v-snackbar>
+      <v-dialog
+        v-model="welcomeDialog"
+        width="500"
+      >
+        <v-card>
+          <v-card-title>
+            Welcome to GigFM!
+          </v-card-title>
+          <v-card-actions>
+            <v-checkbox
+              v-model="dontShowAgain"
+              label="Don't show again"
+              hide-details
+              class="do-not-show-checkbox"
+            ></v-checkbox>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              text
+              tile
+              depressed
+              @click="closeWelcomeDialog"
+            >
+              OK
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-main>
   </v-app>
 </template>
@@ -42,7 +70,9 @@ export default {
     AppBar
   },
   data: () => ({
-    initCompleted: false
+    initCompleted: false,
+    dontShowAgain: false,
+    welcomeDialog: false
   }),
   computed: {
     ...mapState({
@@ -65,14 +95,28 @@ export default {
     ...mapMutations({
       setAlertShow: 'alert/setShow'
     }),
-    initTheme () {
-      window.api.invoke('get-user-preferences')
-        .then(preferences => {
-          this.$vuetify.theme.dark = preferences.darkTheme
-        })
+    async initPreferences () {
+      const preferences = await window.api.invoke('get-user-preferences')
+      this.$vuetify.theme.dark = preferences.darkTheme
+      this.welcomeDialog = preferences.showWelcome
+    },
+    async goToLastVisitedRoute () {
+      const isNewUser = this.welcomeDialog  // If welcome dialog is opened, this is still a new user
+      if (isNewUser) return  // If it's new user, stay at homepage so that user can read intro
+
+      const fullPath = await window.api.invoke('get-appdata', 'last-visited-route')
+      if (fullPath !== this.$route.fullPath) {
+        this.$router.push(fullPath)
+      }
+    },
+    closeWelcomeDialog () {
+      if (this.dontShowAgain) {
+        window.api.invoke('save-user-preferences', { showWelcome: false })
+      }
+      this.welcomeDialog = false
     }
   },
-  created () {
+  async created () {
     this.initRepos()
       .then(() => {
         this.initCompleted = true
@@ -81,7 +125,12 @@ export default {
         alert('Bad luck! Something went wrong, please try again later.')
       })
 
-    this.initTheme()
+    try {
+      await this.initPreferences()
+      await this.goToLastVisitedRoute()
+    } catch (error) {
+      console.error(error)
+    }
   },
   watch: {
     $route() {
@@ -94,6 +143,10 @@ export default {
 <style scoped>
 .ps {
   height: calc(100vh - 30px);  /** 30px is app-bar's height */
+}
+
+.do-not-show-checkbox.v-input--selection-controls {
+  margin-top: 0;
 }
 </style>
 
