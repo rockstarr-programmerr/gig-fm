@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, shell, BrowserWindow } = require('electron')
 const path = require('path')
 const database = require('./actions/database.js')
 
@@ -32,10 +32,14 @@ function createWindow () {
     win.webContents.send('on-window-unmaximized')
   })
 
-  // win.maximize()
   win.loadFile('dist/index.html')
   win.once('ready-to-show', () => {
     win.show()
+  })
+
+  win.webContents.on('new-window', (event, url) => {
+    event.preventDefault()
+    shell.openExternal(url)
   })
 }
 

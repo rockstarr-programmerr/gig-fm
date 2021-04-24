@@ -127,8 +127,17 @@
         {{ randomHappyEmoji() }}.
       </p>
     </section>
-    <section>
-      <p class="caption">Made by <strong>TtheTtruth</strong> with lots of passion.</p>
+    <v-divider></v-divider>
+    <section class="mt-3 caption">
+      <p>
+        This project is open source, read the
+        <a href="https://github.com/rockstarr-programmerr/gig-fm/blob/dev/LICENSE" target="_blank">license.</a>
+      </p>
+      <p>
+        Want to contribute? Visit the
+        <a href="https://github.com/rockstarr-programmerr/gig-fm" target="_blank">source code</a>.
+      </p>
+      <p>Made by <strong>TtheTtruth</strong> with lots of passion.</p>
     </section>
   </v-container>
 </template>
