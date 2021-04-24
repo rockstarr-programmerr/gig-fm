@@ -124,6 +124,11 @@ ipcMain.handle('git-restore', async (event, dir, branchName) => {
   return result
 })
 
+ipcMain.handle('git-restore-deleted-file', async (event, dir, filepath) => {
+  const result = await git.checkout({ fs, dir, filepaths: [filepath], force: true })
+  return result
+})
+
 ipcMain.handle('delete-repo', async (event, repo) => {
   const { id, dir } = repo
   const gitDir = path.join(dir, '.git')

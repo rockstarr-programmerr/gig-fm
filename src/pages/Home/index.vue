@@ -94,7 +94,23 @@
         <strong>permanently</strong>. Think twice before clicking the confirm button.
       </blockquote>
       <p>
-        <strong>Important!</strong> You may (or may not) see a folder called ".git" created inside your project. <br>
+        <strong>Bonus!</strong>
+        Accidentally deleted a file in your project? <br>
+        GigFM can save your ass with the amazing "Restore deleted file" feature. <br>
+        Just click that icon and your file will come back.
+      </p>
+      <p>
+        <v-img
+          :src="require('@/assets/intro-img-9.png')"
+          max-width="500"
+          max-height="500"
+          contain
+          class="add-border"
+        ></v-img>
+      </p>
+      <p>
+        <span class="warning--text">Important!</span>
+        You may (or may not) see a folder called ".git" created inside your project. <br>
         GigFM need this folder to work, <strong>don't delete it</strong>.
       </p>
       <p>

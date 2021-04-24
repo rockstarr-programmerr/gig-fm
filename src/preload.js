@@ -24,7 +24,8 @@ const validChanels = [
   'git-resolve-ref',
   'git-reset-hard',
   'git-change-message',
-  'git-restore'
+  'git-restore',
+  'git-restore-deleted-file'
 ]
 
 contextBridge.exposeInMainWorld(

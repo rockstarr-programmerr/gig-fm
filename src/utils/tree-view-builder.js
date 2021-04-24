@@ -3,7 +3,7 @@ import { splitPaths, joinPaths, makeUniqueArray } from './common.js'
 
 class Path {
   constructor (fullpath) {
-    this.id = fullpath
+    this.id = fullpath  // set ID to fullPath is important as it will be used later
     this.children = []
 
     const splited = splitPaths(fullpath)

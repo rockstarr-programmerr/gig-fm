@@ -44,7 +44,6 @@
         dense
         activatable
         hoverable
-        open-on-click
         transition
         color="secondary"
       >
@@ -68,7 +67,6 @@
         dense
         activatable
         hoverable
-        open-on-click
         transition
         color="secondary"
       >
@@ -92,17 +90,33 @@
         dense
         activatable
         hoverable
-        open-on-click
         transition
         color="secondary"
       >
         <template #prepend="{ item, open }">
           <v-icon v-if="!item.isFile">
-          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-        </v-icon>
-        <v-icon v-else>
-          mdi-file-outline
-        </v-icon>
+            {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+          </v-icon>
+          <v-icon v-else>
+            mdi-file-outline
+          </v-icon>
+        </template>
+        <template #append="{ item }">
+          <v-tooltip
+            v-if="item.isFile"
+            top
+            open-delay="200"
+          >
+            <template #activator="{ on }">
+              <v-icon
+                v-on="on"
+                @click="restoreDeletedFile(item)"
+              >
+                mdi-file-restore-outline
+              </v-icon>
+            </template>
+            Restore deleted file
+          </v-tooltip>
         </template>
       </v-treeview>
     </div>
@@ -235,6 +249,15 @@ export default {
           this.restoring = false
           this.restoreConfirm = false
         })
+    },
+    restoreDeletedFile (item) {
+      const filePath = item.id  // When building treeview, we set full file path as item's ID
+      window.api.invoke('git-restore-deleted-file', this.repo.dir, filePath)
+        .then(() => {
+          alertSuccess()
+          this.deletedFiles = this.deletedFiles.filter(file => file !== filePath)
+        })
+        .catch(alertError)
     }
   },
   watch: {
