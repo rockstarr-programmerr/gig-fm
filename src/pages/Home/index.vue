@@ -77,7 +77,7 @@
       </blockquote>
       <p>
         After comparing "Update: add reverb" and "Final mix", you realize that the reverb you added was shit. <br>
-        You want to go back to "Final mix" and move forward from there. <br>
+        So you want to go back to "Final mix" and move forward from there. <br>
         What you need is "Reset to this version":
       </p>
       <p>

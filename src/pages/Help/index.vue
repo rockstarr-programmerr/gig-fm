@@ -32,7 +32,7 @@
         Here you see history of versions you've committed.
         Clicking the icon to the right will open actions menu of each version
       </p>
-      <h4>Version actions</h4>
+      <h4>Actions menu</h4>
       <h5>Checkout</h5>
       <p>
         Time travel back to this version, your entire project will be exactly like it was at that point in time,
@@ -40,19 +40,19 @@
       </p>
       <h5>Reset to this version</h5>
       <p>
-        Reset your project <strong>permanently</strong> to this version. Any other versions after it will be <strong>completely lost</strong>
+        Reset your project <strong>permanently</strong> to this version. All versions after it will be <strong>completely lost</strong>
         and <strong>not recoverable</strong>. Use this action with care.
       </p>
       <h5>Change message</h5>
       <p>
-        Change the commit message of this version. This action is only available for the most recent version.
-        Remember the rule: <strong>Don't alter the past.</strong>
+        Change the commit message of this version. This action is only available for the latest version.
+        Remember the rule: <strong>You can't alter the past.</strong>
       </p>
       <h3>Repo settings</h3>
       <p>Access repo settings by clicking the settings icon to the right.</p>
       <p>
-        Here you can change repo name, your name and your email, so that if a commit screws up the whole project,
-        everybody knows who to blame.
+        Here you can change repo name, your name and your email, so that if somebody commits a shitty version,
+        others know who to blame.
       </p>
     </section>
   </v-container>

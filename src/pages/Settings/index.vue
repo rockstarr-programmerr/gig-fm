@@ -9,6 +9,7 @@
       <v-col cols="9">
         <v-switch
           v-model="darkTheme"
+          :label="darkTheme ? 'On' : 'Off'"
         ></v-switch>
       </v-col>
     </v-row>

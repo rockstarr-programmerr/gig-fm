@@ -20,7 +20,8 @@ function createWindow () {
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
-    }
+    },
+    icon: path.join(__dirname, 'assets', 'logo.png')
   })
 
   win.on('maximize', () => {
@@ -31,7 +32,7 @@ function createWindow () {
     win.webContents.send('on-window-unmaximized')
   })
 
-  win.maximize()
+  // win.maximize()
   win.loadFile('dist/index.html')
   win.once('ready-to-show', () => {
     win.show()

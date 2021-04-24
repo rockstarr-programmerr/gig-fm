@@ -9,7 +9,7 @@
   >
     <v-img
       :src="require('@/assets/logo.png')"
-      max-width="16"
+      max-width="22"
       height="100%"
     ></v-img>
     <span class="ml-2">GigFM</span>
