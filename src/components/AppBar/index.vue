@@ -8,7 +8,7 @@
     class="draggable app-bar"
   >
     <v-img
-      :src="require('@/assets/logo.png')"
+      :src="require('@/assets/logo.ico')"
       max-width="22"
       height="100%"
     ></v-img>

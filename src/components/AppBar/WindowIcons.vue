@@ -41,7 +41,7 @@
 export default {
   name: 'WindowIcons',
   data: () => ({
-    isMaximized: true
+    isMaximized: false
   }),
   methods: {
     closeWindow () {
