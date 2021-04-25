@@ -1,3 +1,6 @@
+import copy from 'copy-to-clipboard'
+import { alertSuccess } from './message.js'
+
 export function wait (miliseconds) {
   return new Promise(resolve => setTimeout(resolve, miliseconds))
 }
@@ -27,4 +30,9 @@ export function arrayEqual (array1, array2) {
     return false
   }
   return array1.every((value, index) => array2[index] === value)
+}
+
+export function copyToClipboard (text, msg) {
+  copy(text)
+  alertSuccess(msg)
 }

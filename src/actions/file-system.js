@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const util = require('util')
-const { ipcMain } = require('electron')
+const { ipcMain, shell } = require('electron')
 
 
 ipcMain.handle('remove-files', async (event, filePaths, basePath) => {
@@ -13,4 +13,8 @@ ipcMain.handle('remove-files', async (event, filePaths, basePath) => {
   const promises = filePaths.map(path => unlink(path))
 
   await Promise.all(promises)
+})
+
+ipcMain.handle('open-in-explorer', async (event, fullPath) => {
+  shell.openPath(fullPath)
 })

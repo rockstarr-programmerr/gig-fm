@@ -17,6 +17,7 @@ const validChanels = [
   'delete-repo',
   'save-appdata',
   'get-appdata',
+  'open-in-explorer',
   'git-commit',
   'git-log',
   'git-status',

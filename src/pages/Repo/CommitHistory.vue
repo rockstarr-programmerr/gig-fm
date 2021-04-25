@@ -57,6 +57,9 @@
                       <v-list-item-content>
                         <v-list-item-title>Checkout</v-list-item-title>
                       </v-list-item-content>
+                      <v-list-item-icon>
+                        <v-icon>mdi-magnify</v-icon>
+                      </v-list-item-icon>
                     </v-list-item>
                     <v-list-item
                       @click="confirmReset(commit)"
@@ -65,6 +68,9 @@
                       <v-list-item-content>
                         <v-list-item-title>Reset to this version</v-list-item-title>
                       </v-list-item-content>
+                      <v-list-item-icon>
+                        <v-icon>mdi-undo-variant</v-icon>
+                      </v-list-item-icon>
                     </v-list-item>
                     <v-list-item
                       v-if="commit.id === firstCommitId && currentCommitId === firstCommitId"
@@ -73,6 +79,17 @@
                       <v-list-item-content>
                         <v-list-item-title>Change message</v-list-item-title>
                       </v-list-item-content>
+                      <v-list-item-icon>
+                        <v-icon>mdi-square-edit-outline</v-icon>
+                      </v-list-item-icon>
+                    </v-list-item>
+                    <v-list-item @click="copyToClipboard(commit.message, 'Copied to clipboard.')">
+                      <v-list-item-content>
+                        <v-list-item-title>Copy commit message</v-list-item-title>
+                      </v-list-item-content>
+                      <v-list-item-icon>
+                        <v-icon>mdi-content-copy</v-icon>
+                      </v-list-item-icon>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -185,6 +202,7 @@ import { loadingMixin } from '@/mixins/loading.js'
 import { formatTimestamp } from '@/utils/format.js'
 import { alertSuccess, alertError } from '@/utils/message.js'
 import { required } from '@/utils/validate.js'
+import { copyToClipboard } from '@/utils/common.js'
 
 export default {
   name: 'CommitHistory',
@@ -239,6 +257,7 @@ export default {
     }
   },
   methods: {
+    copyToClipboard,
     formatTimestamp,
     async setCommits (repo) {
       this['loading.start']()

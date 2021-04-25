@@ -14,7 +14,7 @@
         ></v-text-field>
       </div>
     </div>
-    <v-divider></v-divider>
+    <v-divider class="mt-1"></v-divider>
     <v-row>
       <v-col cols="12">
         <v-list>

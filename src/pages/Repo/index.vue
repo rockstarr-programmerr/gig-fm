@@ -4,7 +4,22 @@
     <span class="caption">
       Location: <span class="font-weight-light">{{ repo.dir }}</span>
     </span>
-    <v-divider></v-divider>
+    <v-tooltip
+      top
+      open-delay="200"
+    >
+      <template #activator="{ on }">
+        <v-icon
+          v-on="on"
+          class="ml-1"
+          @click="openInExplorer"
+        >
+          mdi-arrow-right-bold-hexagon-outline
+        </v-icon>
+      </template>
+      Open in explorer
+    </v-tooltip>
+    <v-divider class="mt-1"></v-divider>
     <v-row class="mt-5">
       <v-col cols="12">
         <div class="d-flex align-items-center">
@@ -201,6 +216,9 @@ export default {
     },
     onGitRestore () {
       this.$refs.commitHistory.setCurrentCommit()
+    },
+    openInExplorer () {
+      window.api.invoke('open-in-explorer', this.repo.dir)
     }
   },
   watch: {
