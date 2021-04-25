@@ -79,7 +79,7 @@ export default {
         commit('setGettingRepos', true)
 
         window.api.send('get-repos') || []
-        window.api.receive('get-repos', (isSuccess, results) => {
+        window.api.receiveOnce('get-repos', (isSuccess, results) => {
           if (isSuccess) {
             results.forEach(result => {
               const author = new Author({
@@ -109,7 +109,7 @@ export default {
         commit('setCreatingRepo', true)
 
         window.api.send('create-repo', repo)
-        window.api.receive('create-repo', (isSuccess, payload) => {
+        window.api.receiveOnce('create-repo', (isSuccess, payload) => {
           if (isSuccess) {
             repo.id = payload  // In this case, `payload` is the created ID
             repo = new Repo(repo)
@@ -129,7 +129,7 @@ export default {
         commit('setUpdatingRepo', true)
 
         window.api.send('update-repo', payload)
-        window.api.receive('update-repo', (isSuccess) => {
+        window.api.receiveOnce('update-repo', (isSuccess) => {
           if (isSuccess) {
             commit('editRepo', payload)
             resolve()

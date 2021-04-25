@@ -45,6 +45,11 @@ contextBridge.exposeInMainWorld(
       if (validChanels.includes(channel)) {
         ipcRenderer.on(channel, (event, ...args) => func(...args))
       }
+    },
+    receiveOnce (channel, func) {
+      if (validChanels.includes(channel)) {
+        ipcRenderer.once(channel, (event, ...args) => func(...args))
+      }
     }
   }
 )

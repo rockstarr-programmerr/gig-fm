@@ -129,20 +129,6 @@ export default {
     ]),
     addNewRepo () {
       window.api.send('add-new-repo')
-      window.api.receive('add-new-repo', async repo => {
-        if (repo === undefined) return
-        this.createRepo(repo)
-          .then(lastId => {
-            this.$router.push({ name: 'Repo', params: { id: lastId } })
-          })
-          .catch(errorCode => {
-            if (errorCode === 'REPO_EXISTS') {
-              alertError("You've already created this repo.")
-            } else {
-              alertError()
-            }
-          })
-      })
     },
     goHome () {
       if (this.$route.name !== 'Home') {
@@ -150,6 +136,22 @@ export default {
       }
     }
   },
+  mounted () {
+    window.api.receive('add-new-repo', async repo => {
+      if (repo === undefined) return
+      this.createRepo(repo)
+        .then(lastId => {
+          this.$router.push({ name: 'Repo', params: { id: lastId } })
+        })
+        .catch(errorCode => {
+          if (errorCode === 'REPO_EXISTS') {
+            alertError("You've already created this repo.")
+          } else {
+            alertError()
+          }
+        })
+    })
+  }
 }
 </script>
 

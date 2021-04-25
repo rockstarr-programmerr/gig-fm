@@ -204,8 +204,8 @@ export default {
     }
   },
   methods: {
-    startWatchingStatus (repo) {
-      window.api.receive('git-status', (results) => {
+    listenToGitStatus () {
+      window.api.receiveOnce('git-status', (results) => {
         this.newFiles = []
         this.changedFiles = []
         this.deletedFiles = []
@@ -225,11 +225,13 @@ export default {
 
         this['loading.stop']()
       })
-
+    },
+    startWatchingStatus (repo) {
       clearInterval(this.interval)
       this.interval = window.setInterval(() => {
+        this.listenToGitStatus()
         window.api.send('git-status', repo.dir)
-      }, 1000)
+      }, 2000)
     },
     gitRestore () {
       this.restoring = true
