@@ -84,6 +84,12 @@
       "target": "nsis",
       "icon": "src/assets/logo.ico"
     },
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.productivity",
+      "icon": "src/assets/logo.ico",
+      "darkModeSupport": true
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
