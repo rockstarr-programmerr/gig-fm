@@ -1,6 +1,11 @@
 const sqlite3 = require('sqlite3')
+const path = require('path')
+const log = require('electron-log')
+const { app } = require('electron')
 
-const db = new sqlite3.Database('gigfm.sqlite3')
+const dbPath = path.resolve(app.getAppPath(), 'gigfm.sqlite3').replace('app.asar', 'app.asar.unpacked')
+log.info(dbPath)
+const db = new sqlite3.Database(dbPath)
 
 function setup () {
   return new Promise((resolve, reject) => {

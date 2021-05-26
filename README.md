@@ -33,7 +33,7 @@ npm run build
 
 ### Make executable
 ```
-npm make
+npm run make
 ```
 
 ### Create installer
